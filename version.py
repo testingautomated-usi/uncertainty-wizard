@@ -1,0 +1,5 @@
+VERSION = "0.0.20"
+RELEASE = VERSION + "-alpha2"
+# RELEASE = VERSION + "-beta1"
+# RELEASE = VERSION + "-rc1"
+# RELEASE = VERSION

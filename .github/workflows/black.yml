@@ -1,0 +1,39 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+          check-latest: true
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8==3.8.4 black==20.8b1 isort==5.6.4
+
+      - name: flake8
+        run: |
+          # Taken from https://docs.github.com/en/free-pro-team@latest/actions/guides/building-and-testing-python
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 uncertainty_wizard tests_unit --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 uncertainty_wizard tests_unit --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: black
+        run: |
+          black uncertainty_wizard tests_unit --check --diff --color
+
+      - name: isort
+        run: |
+          isort uncertainty_wizard tests_unit --check-only --profile black
