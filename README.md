@@ -10,7 +10,7 @@ The first official release will be deployed in a couple of days.
         <img src="https://img.shields.io/badge/license-MIT-green.svg" /></a>
     <a href="https://github.com/HunterMcGushion/docstr_coverage" alt="Docstr-Coverage: 100%">
         <img src="https://img.shields.io/badge/docstr--coverage-100%25-brightgreen.svg" /></a>
-   
+    <img src="https://github.com/testingautomated-usi/uncertainty-wizard/workflows/Unit%20Tests/badge.svg" />
 </p>
 
 This library provides simple and transparent uncertainty and confidence quantification for 
