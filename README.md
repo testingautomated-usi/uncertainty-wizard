@@ -1,6 +1,5 @@
-<!-- ![UNCERTAINTY WIZARD](https://github.com/testingautomated-usi/uncertainty-wizard/raw/main/docs/uwiz_logo.PNG) -->
+![UNCERTAINTY WIZARD](https://github.com/testingautomated-usi/uncertainty-wizard/raw/main/docs/uwiz_logo.PNG)
 
-# Uncertainty-Wizard
 **WARNING** This is a pre-release, published while setting up the CI. 
 The first official release will be deployed in a couple of days.
 
@@ -17,10 +16,13 @@ The first official release will be deployed in a couple of days.
 This library provides simple and transparent uncertainty and confidence quantification for 
 fast-forward tensorflow.keras models.
 
-Import `uncertainty_wizard as uwiz`, and you will amongst other things be able to do the following:
-* Perform MC-Dropout using the Sequential API (`model=uwiz.models.StochasticSequential(my_layers)`) `
-* Perform MC-Dropout on pre-trained models (`model=uwiz.models.stochastic_from_keras(your_model)`)
-* Train Deep Ensembles in a memory and time efficient way with our lazily loaded and easily parallelized LazyEnsembles. (`model=uwiz.models.LazyEnsemble(path='model', num_models=20, default_num_processes=4`)
+Import `uncertainty_wizard as uwiz`, and you will be able to
+* Calculate uncertainties based on MC-Dropout using the Sequential Keras API.
+* Do the same on pre-trained models.
+* Handle Deep Ensembles to get higher accuracy and better uncertainty scores.
+* Multi-Process your Deep Ensembles on the GPU by switching just one integer.
+
+Want to know how to do all that? Get started with the getting started guide (to be linked here soon).
 
 #### Installation
 
