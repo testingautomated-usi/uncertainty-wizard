@@ -30,4 +30,6 @@ jobs:
           pip install -r test_requirements.txt
 
       - name: Run Tests
-        run: bash scripts/run_coverage.sh
+        run: |
+          bash scripts/run_coverage.sh
+          bash <(curl -s https://codecov.io/bash)
