@@ -60,8 +60,8 @@ You can find them here: [List of jupyter examples](https://uncertainty-wizard.re
 
 #### Authors and Paper
 ``uncertainty-wizard`` was developed by Michael Weiss and Paolo Tonella at USI (Lugano, Switzerland).
-If was first presented in the following paper 
-(preprint can be found [here](https://uncertainty-wizard.readthedocs.io/en/latest/paper.html):  
+An early version was first presented in the following paper 
+(preprint can be found [here](https://uncertainty-wizard.readthedocs.io/en/latest/paper.html)):  
 
 <details>  
   <summary>Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring (expand for BibTex)</summary>  
