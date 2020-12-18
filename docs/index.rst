@@ -21,7 +21,7 @@ allowing to easily and efficiently create uncertainty-aware deep neural networks
     User Guide: Quantifiers <user_guide_quantifiers>
     Examples <examples>
     Complete API <complete_api>
-    Literature <literature>
+    Literature <paper>
     Sources on Github <https://github.com/testingautomated-usi/uncertainty_wizard>
 
 
