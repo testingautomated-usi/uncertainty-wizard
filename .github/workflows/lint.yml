@@ -37,3 +37,6 @@ jobs:
       - name: isort
         run: |
           isort uncertainty_wizard tests_unit --check-only --profile black
+
+      - name: Docstring Coverage
+        run: docstr-coverage uncertainty_wizard --skipfiledoc --skip-private --failunder=100
