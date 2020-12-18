@@ -56,20 +56,25 @@ You can find them here: [List of jupyter examples](https://uncertainty-wizard.re
 
 #### Authors and Paper
 ``uncertainty-wizard`` was developed by Michael Weiss and Paolo Tonella at USI (Lugano, Switzerland).
-If you like it and use it for research, you can cite us:
-    
-    @inproceedings{Weiss2021,
-      title={Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring},
-      author={Weiss, Michael and Tonella, Paolo},
-      booktitle={2021 IEEE 14th International Conference on Software Testing, 
-        Validation and Verification (ICST)},
-      year={2021},
-      organization={IEEE},
-      note={forthcoming}
-    }
+If was first presented in the following paper 
+[(preprint)](https://uncertainty-wizard.readthedocs.io/en/latest/literature.html):  
 
-A preprint and a tool paper which provides a deeper technical discussion of ``uncertainty-wizard`` 
-will be added in January at latest.
+<details>  
+  <summary>Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring (expand for BibTex)</summary>  
+
+    @inproceedings{Weiss2021,  
+      title={Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring},  
+      author={Weiss, Michael and Tonella, Paolo},  
+      booktitle={2021 IEEE 14th International Conference on Software Testing,   
+        Validation and Verification (ICST)},  
+      year={2021},  
+      organization={IEEE},  
+      note={forthcoming}  
+    }  
+
+</details>
+
+We are also currently writing a technical tool paper, describing design choices and challenges.
 
 #### Contributing
 Issues and PRs are welcome! 
