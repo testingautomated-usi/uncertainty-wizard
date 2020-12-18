@@ -14,6 +14,10 @@ The first official release will be deployed in a couple of days.
     <a href='https://uncertainty-wizard.readthedocs.io/en/latest/?badge=latest'>
         <img src='https://readthedocs.org/projects/uncertainty-wizard/badge/?version=latest' alt='Documentation Status' />
     </a>
+    <a href="https://codecov.io/gh/testingautomated-usi/uncertainty-wizard">
+        <img src="https://codecov.io/gh/testingautomated-usi/uncertainty-wizard/branch/main/graph/badge.svg?token=TWV2TCRE3E"/>
+    </a>
+    
 </p>
 
 Uncertainty wizard is a plugin on top of `tensorflow.keras`,
