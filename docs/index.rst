@@ -21,7 +21,7 @@ allowing to easily and efficiently create uncertainty-aware deep neural networks
     User Guide: Quantifiers <user_guide_quantifiers>
     Examples <examples>
     Complete API <complete_api>
-    Literature <paper>
+    Paper <paper>
     Sources on Github <https://github.com/testingautomated-usi/uncertainty_wizard>
 
 
@@ -30,7 +30,4 @@ allowing to easily and efficiently create uncertainty-aware deep neural networks
 Note that our documentation assumes basic knowledge of the tensorflow.keras API.
 If you do not know tensorflow.keras yet, check out the TensorflowGuide_.
 
-
-..
-   TODO: Add link to github repository in 'Sources on github' above
 

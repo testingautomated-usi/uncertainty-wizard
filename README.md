@@ -34,7 +34,7 @@ Uncertainty wizard is a plugin on top of `tensorflow.keras`,
 It's as easy as `pip install uncertainty-wizard`
 
 #### Requirements
-- tensorflow >= 2.2.0
+- tensorflow >= 2.3.0
 - python 3.6* / 3.7 / 3.8
 
 Note that **tensorflow 2.4** has just been released. 
@@ -61,7 +61,7 @@ You can find them here: [List of jupyter examples](https://uncertainty-wizard.re
 #### Authors and Paper
 ``uncertainty-wizard`` was developed by Michael Weiss and Paolo Tonella at USI (Lugano, Switzerland).
 If was first presented in the following paper 
-[(preprint)](https://uncertainty-wizard.readthedocs.io/en/latest/literature.html):  
+(preprint can be found [here](https://uncertainty-wizard.readthedocs.io/en/latest/paper.html)):  
 
 <details>  
   <summary>Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring (expand for BibTex)</summary>  
@@ -79,6 +79,7 @@ If was first presented in the following paper
 </details>
 
 We are also currently writing a technical tool paper, describing design choices and challenges.
+We are happy to share a preprint upon request.
 
 #### Contributing
 Issues and PRs are welcome! 

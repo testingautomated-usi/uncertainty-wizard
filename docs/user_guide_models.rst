@@ -146,6 +146,7 @@ experimental. Thus, by extension, our ensembles are also to be considered experi
 
    # Define how models should be trained. This function must be picklable.
    def model_creator(model_id: int):
+      import tensorflow as tf
       model = tf.keras.models.Sequential()
       model.add(tf.keras.layers.Dense(100)
       model.add(tf.keras.layers.Dropout(0.3))
