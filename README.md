@@ -11,6 +11,9 @@ The first official release will be deployed in a couple of days.
     <a href="https://github.com/HunterMcGushion/docstr_coverage" alt="Docstr-Coverage: 100%">
         <img src="https://img.shields.io/badge/docstr--coverage-100%25-brightgreen.svg" /></a>
     <img src="https://github.com/testingautomated-usi/uncertainty-wizard/workflows/Unit%20Tests/badge.svg" />
+    <a href='https://uncertainty-wizard.readthedocs.io/en/latest/?badge=latest'>
+        <img src='https://readthedocs.org/projects/uncertainty-wizard/badge/?version=latest' alt='Documentation Status' />
+    </a>
 </p>
 
 Uncertainty wizard is a plugin on top of `tensorflow.keras`,
@@ -52,9 +55,8 @@ Larger and examples are also provided - and you can run them in colab right away
 You can find them here: [List of jupyter examples](https://uncertainty-wizard.readthedocs.io/en/latest/examples.html)
 
 #### Authors and Paper
-``uncertainty-wizard`` was developed at the Università della Svizzera Italiana (USI) in Lugano
-by Michael Weiss under the supervision of Prof. Paolo Tonella.
-If you like uncertainty wizard and use it for research, you can cite us:
+``uncertainty-wizard`` was developed by Michael Weiss and Paolo Tonella at USI (Lugano, Switzerland).
+If you like it and use it for research, you can cite us:
     
     @inproceedings{Weiss2021,
       title={Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring},
