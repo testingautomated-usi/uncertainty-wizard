@@ -69,10 +69,9 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 # Disabled for Double Blindness
-# TODO check main/master branch name
 html_context = {
   'display_github': True,
   'github_user': 'testingautomated-usi',
   'github_repo': 'uncertainty_wizard',
-  'github_version': 'master/docs/',
+  'github_version': 'main/docs/',
 }

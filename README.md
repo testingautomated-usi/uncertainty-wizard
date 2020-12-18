@@ -11,25 +11,30 @@ The first official release will be deployed in a couple of days.
     <a href="https://github.com/HunterMcGushion/docstr_coverage" alt="Docstr-Coverage: 100%">
         <img src="https://img.shields.io/badge/docstr--coverage-100%25-brightgreen.svg" /></a>
     <img src="https://github.com/testingautomated-usi/uncertainty-wizard/workflows/Unit%20Tests/badge.svg" />
+    <a href='https://uncertainty-wizard.readthedocs.io/en/latest/?badge=latest'>
+        <img src='https://readthedocs.org/projects/uncertainty-wizard/badge/?version=latest' alt='Documentation Status' />
+    </a>
+    <a href="https://codecov.io/gh/testingautomated-usi/uncertainty-wizard">
+        <img src="https://codecov.io/gh/testingautomated-usi/uncertainty-wizard/branch/main/graph/badge.svg?token=TWV2TCRE3E"/>
+    </a>
+    
 </p>
 
-This library provides simple and transparent uncertainty and confidence quantification for 
-fast-forward tensorflow.keras models.
+Uncertainty wizard is a plugin on top of `tensorflow.keras`,
+ allowing to easily and efficiently create uncertainty-aware deep neural networks:
 
-Import `uncertainty_wizard as uwiz`, and you will be able to
-* Calculate uncertainties based on MC-Dropout using the Sequential Keras API.
-* Do the same on pre-trained models.
-* Handle Deep Ensembles to get higher accuracy and better uncertainty scores.
-* Multi-Process your Deep Ensembles on the GPU by switching just one integer.
-
-Want to know how to do all that? Get started with the getting started guide (to be linked here soon).
+* Plain Keras Syntax: Use the layers and APIs you know and love.
+* Conversion from keras: Convert existing keras models into uncertainty aware models.
+* Smart Randomness: Use the same model for point predictions and sampling based inference.
+* Fast ensembles: Train and evaluate deep ensembles lazily loaded and using parallel processing.
+* Super easy setup: Pip installable. Only tensorflow as dependency.
 
 #### Installation
 
 It's as easy as `pip install uncertainty-wizard`
 
 #### Requirements
-- tensorflow >= 2.2.0
+- tensorflow >= 2.3.0
 - python 3.6* / 3.7 / 3.8
 
 Note that **tensorflow 2.4** has just been released. 
@@ -39,29 +44,42 @@ Until then, please stick to tensorflow 2.3.x.
 *python 3.6 requires to `pip install dataclasses`
 
 #### Documentation
-A link to our documentation and user guide will be added here soon.
+Our documentation is deployed to:
+[uncertainty-wizard.readthedocs.io/](https://uncertainty-wizard.readthedocs.io/)
+
+Note that we have a 100% docstring coverage on public method and classes.
+Hence, your IDE will be able to provide you with a good amount of docs out of the box.
 
 #### Examples
-Our docs contain a list of jupyter based examples, which you can run in colab right away.
-You can find them here: (Link will be added soon)
+A set of small and easy examples, perfect to get started can be found in the 
+[user guide for our models](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_models.html)
+and the [user guide for our quantifiers](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_quantifiers.html)
+
+Larger and examples are also provided - and you can run them in colab right away.
+You can find them here: [List of jupyter examples](https://uncertainty-wizard.readthedocs.io/en/latest/examples.html)
 
 #### Authors and Paper
-Uncertainty Wizard was developed at the Università della Svizzera Italiana (USI) in Lugano
-by Michael Weiss under the supervision of Prof. Paolo Tonella.
-If you like uncertainty wizard and use it for research, you can cite us:
-    
-    @inproceedings{Weiss2021,
-      title={Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring},
-      author={Weiss, Michael and Tonella, Paolo},
-      booktitle={2021 IEEE 14th International Conference on Software Testing, 
-        Validation and Verification (ICST)},
-      year={2021},
-      organization={IEEE},
-      note={forthcoming}
-    }
+``uncertainty-wizard`` was developed by Michael Weiss and Paolo Tonella at USI (Lugano, Switzerland).
+If was first presented in the following paper 
+(preprint can be found [here](https://uncertainty-wizard.readthedocs.io/en/latest/paper.html)):  
 
-A preprint and a tool paper which provides a deeper technical discussion of ``uncertainty_wizard`` 
-will be added in January at latest.
+<details>  
+  <summary>Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring (expand for BibTex)</summary>  
+
+    @inproceedings{Weiss2021,  
+      title={Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring},  
+      author={Weiss, Michael and Tonella, Paolo},  
+      booktitle={2021 IEEE 14th International Conference on Software Testing,   
+        Validation and Verification (ICST)},  
+      year={2021},  
+      organization={IEEE},  
+      note={forthcoming}  
+    }  
+
+</details>
+
+We are also currently writing a technical tool paper, describing design choices and challenges.
+We are happy to share a preprint upon request.
 
 #### Contributing
 Issues and PRs are welcome! 
