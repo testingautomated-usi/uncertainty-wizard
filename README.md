@@ -13,16 +13,14 @@ The first official release will be deployed in a couple of days.
     <img src="https://github.com/testingautomated-usi/uncertainty-wizard/workflows/Unit%20Tests/badge.svg" />
 </p>
 
-This library provides simple and transparent uncertainty and confidence quantification for 
-fast-forward tensorflow.keras models.
+Uncertainty wizard is a plugin on top of `tensorflow.keras`,
+ allowing to easily and efficiently create uncertainty-aware deep neural networks:
 
-Import `uncertainty_wizard as uwiz`, and you will be able to
-* Calculate uncertainties based on MC-Dropout using the Sequential Keras API.
-* Do the same on pre-trained models.
-* Handle Deep Ensembles to get higher accuracy and better uncertainty scores.
-* Multi-Process your Deep Ensembles on the GPU by switching just one integer.
-
-Want to know how to do all that? Get started with the getting started guide (to be linked here soon).
+* Plain Keras Syntax: Use the layers and APIs you know and love.
+* Conversion from keras: Convert existing keras models into uncertainty aware models.
+* Smart Randomness: Use the same model for point predictions and sampling based inference.
+* Fast ensembles: Train and evaluate deep ensembles lazily loaded and using parallel processing.
+* Super easy setup: Pip installable. Only tensorflow as dependency.
 
 #### Installation
 
@@ -39,14 +37,22 @@ Until then, please stick to tensorflow 2.3.x.
 *python 3.6 requires to `pip install dataclasses`
 
 #### Documentation
-A link to our documentation and user guide will be added here soon.
+Our documentation is deployed to:
+[uncertainty-wizard.readthedocs.io/](https://uncertainty-wizard.readthedocs.io/)
+
+Note that we have a 100% docstring coverage on public method and classes.
+Hence, your IDE will be able to provide you with a good amount of docs out of the box.
 
 #### Examples
-Our docs contain a list of jupyter based examples, which you can run in colab right away.
-You can find them here: (Link will be added soon)
+A set of small and easy examples, perfect to get started can be found in the 
+[user guide for our models](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_models.html)
+and the [user guide for our quantifiers](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_quantifiers.html)
+
+Larger and examples are also provided - and you can run them in colab right away.
+You can find them here: [List of jupyter examples](https://uncertainty-wizard.readthedocs.io/en/latest/examples.html)
 
 #### Authors and Paper
-Uncertainty Wizard was developed at the Università della Svizzera Italiana (USI) in Lugano
+``uncertainty-wizard`` was developed at the Università della Svizzera Italiana (USI) in Lugano
 by Michael Weiss under the supervision of Prof. Paolo Tonella.
 If you like uncertainty wizard and use it for research, you can cite us:
     
@@ -60,7 +66,7 @@ If you like uncertainty wizard and use it for research, you can cite us:
       note={forthcoming}
     }
 
-A preprint and a tool paper which provides a deeper technical discussion of ``uncertainty_wizard`` 
+A preprint and a tool paper which provides a deeper technical discussion of ``uncertainty-wizard`` 
 will be added in January at latest.
 
 #### Contributing
