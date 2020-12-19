@@ -7,11 +7,10 @@ from unittest import TestCase
 
 from uncertainty_wizard.models.ensemble_utils import DeviceAllocatorContextManager
 
-FILE_PATH = 'temp_test_6543543168'
+FILE_PATH = "temp_test_6543543168"
 
 
 class TestDeviceAllocator(DeviceAllocatorContextManager, abc.ABC):
-
     @classmethod
     def file_path(cls) -> str:
         return FILE_PATH
@@ -30,26 +29,39 @@ class TestDeviceAllocator(DeviceAllocatorContextManager, abc.ABC):
 
 
 class FunctionalStochasticTest(TestCase):
+    def tearDown(cls) -> None:
+        # Delete temp files
+        TestDeviceAllocator.before_start()
 
     def test_cleans_files_before_start(self):
         pathlib.Path(FILE_PATH).touch()
         TestDeviceAllocator.before_start()
-        self.assertFalse(os.path.isfile(FILE_PATH), "Specified temp file (allocation or lockfile) was not deleted")
+        self.assertFalse(
+            os.path.isfile(FILE_PATH),
+            "Specified temp file (allocation or lockfile) was not deleted",
+        )
 
     def test_acquire_and_release_lock(self):
         TestDeviceAllocator.before_start()
         # Test lock was acquired
         lockfile = TestDeviceAllocator._acquire_lock()
-        self.assertTrue(os.path.isfile(FILE_PATH + '.lock'), "Lockfile was not created")
+        self.assertTrue(os.path.isfile(FILE_PATH + ".lock"), "Lockfile was not created")
         # Test lock file can not be acquired twice
         with self.assertRaises(RuntimeError) as e_context:
             TestDeviceAllocator._acquire_lock()
-            self.assertTrue('Ensemble process was not capable of acquiring lock' in str(e_context.exception))
+            self.assertTrue(
+                "Ensemble process was not capable of acquiring lock"
+                in str(e_context.exception)
+            )
         # Test lock is released
         TestDeviceAllocator._release_lock(lockfile)
-        self.assertFalse(os.path.isfile(FILE_PATH + '.lock'), "Lockfile was not deleted")
+        self.assertFalse(
+            os.path.isfile(FILE_PATH + ".lock"), "Lockfile was not deleted"
+        )
 
-    def _assert_device_selection(self, chosen_device, expected_device, expected_availabilities):
+    def _assert_device_selection(
+        self, chosen_device, expected_device, expected_availabilities
+    ):
         self.assertEqual(chosen_device, expected_device)
         with open(FILE_PATH, "rb") as file:
             availabilities = pickle.load(file)
@@ -85,4 +97,4 @@ class FunctionalStochasticTest(TestCase):
         # No capacity left, make sure error is thrown
         with self.assertRaises(ValueError) as e_context:
             TestDeviceAllocator._get_availabilities_and_choose_device()
-            self.assertTrue('No available devices. ' in str(e_context.exception))
+            self.assertTrue("No available devices. " in str(e_context.exception))
