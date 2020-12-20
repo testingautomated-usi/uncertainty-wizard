@@ -17,7 +17,7 @@
 </details>
 
 We are currently working on the copy ready version. 
-A link to an early preprint version will be added here in a couple of days. 
+An early preprint can be found [here](https://mweiss.ch/assets/papers/icst-2021-uncertainty-preprint.pdf).
 
 Also, we will soon a release a tool paper discussing the `uncertainty-wizard` interface
 and technical challenges in more detail.
