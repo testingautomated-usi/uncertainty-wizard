@@ -1,8 +1,5 @@
 ![UNCERTAINTY WIZARD](https://github.com/testingautomated-usi/uncertainty-wizard/raw/main/docs/uwiz_logo.PNG)
 
-**WARNING** This is a pre-release, published while setting up the CI. 
-The first official release will be deployed in a couple of days.
-
 <p align="center">
     <a href="https://black.readthedocs.io/en/stable/" alt="Code Style: Black">
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
