@@ -1,8 +1,5 @@
 ![UNCERTAINTY WIZARD](https://github.com/testingautomated-usi/uncertainty-wizard/raw/main/docs/uwiz_logo.PNG)
 
-**WARNING** This is a pre-release, published while setting up the CI. 
-The first official release will be deployed in a couple of days.
-
 <p align="center">
     <a href="https://black.readthedocs.io/en/stable/" alt="Code Style: Black">
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
@@ -17,7 +14,9 @@ The first official release will be deployed in a couple of days.
     <a href="https://codecov.io/gh/testingautomated-usi/uncertainty-wizard">
         <img src="https://codecov.io/gh/testingautomated-usi/uncertainty-wizard/branch/main/graph/badge.svg?token=TWV2TCRE3E"/>
     </a>
-    
+    <a href="https://pypi.org/project/uncertainty-wizard/">
+        <img alt="PyPI" src="https://img.shields.io/pypi/v/uncertainty-wizard">
+    </a>
 </p>
 
 Uncertainty wizard is a plugin on top of `tensorflow.keras`,
