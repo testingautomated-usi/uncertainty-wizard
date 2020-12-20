@@ -17,7 +17,9 @@ The first official release will be deployed in a couple of days.
     <a href="https://codecov.io/gh/testingautomated-usi/uncertainty-wizard">
         <img src="https://codecov.io/gh/testingautomated-usi/uncertainty-wizard/branch/main/graph/badge.svg?token=TWV2TCRE3E"/>
     </a>
-    
+    <a href="https://pypi.org/project/uncertainty-wizard/">
+        <img alt="PyPI" src="https://img.shields.io/pypi/v/uncertainty-wizard">
+    </a>
 </p>
 
 Uncertainty wizard is a plugin on top of `tensorflow.keras`,
