@@ -36,23 +36,19 @@ It's as easy as `pip install uncertainty-wizard`
 - tensorflow >= 2.3.0
 - python 3.6* / 3.7 / 3.8
 
-Note that **tensorflow 2.4** has just been released. 
-We will test and create compatibility with uncertainty wizard in the next couple of weeks.
-Until then, please stick to tensorflow 2.3.x.
-
 *python 3.6 requires to `pip install dataclasses`
 
 #### Documentation
-Our documentation is deployed to:
-[uncertainty-wizard.readthedocs.io/](https://uncertainty-wizard.readthedocs.io/)
+Our documentation is deployed to
+[uncertainty-wizard.readthedocs.io](https://uncertainty-wizard.readthedocs.io/).
 
 Note that we have a 100% docstring coverage on public method and classes.
 Hence, your IDE will be able to provide you with a good amount of docs out of the box.
 
 #### Examples
 A set of small and easy examples, perfect to get started can be found in the 
-[user guide for our models](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_models.html)
-and the [user guide for our quantifiers](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_quantifiers.html)
+[models user guide](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_models.html)
+and the [quantifiers user guide](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_quantifiers.html).
 
 Larger and examples are also provided - and you can run them in colab right away.
 You can find them here: [List of jupyter examples](https://uncertainty-wizard.readthedocs.io/en/latest/examples.html)
