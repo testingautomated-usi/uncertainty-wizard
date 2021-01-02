@@ -77,6 +77,8 @@ We are also currently writing a technical tool paper, describing design choices 
 We are happy to share a preprint upon request.
 
 #### Contributing
-Issues and PRs are welcome! 
-Before investing a lot of time for a PR, please open an issue first, describing your contribution.
+Issues and PRs are welcome! Before investing a lot of time for a PR, please open an issue first, describing your contribution.
 This way, we can make sure that the contribution fits well into this repository.
+
+We also mark issues which are great to start contributing as as [good first issues](https://github.com/testingautomated-usi/uncertainty-wizard/contribute).
+If you want to implement an existing issue, don't forget to comment on it s.t. everyone knows that you are working on it.
