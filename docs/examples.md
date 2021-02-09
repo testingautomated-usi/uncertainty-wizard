@@ -29,6 +29,13 @@ specific tasks:
     <a class="reference external" href="https://colab.research.google.com/github/testingautomated-usi/uncertainty-wizard/blob/main/examples/MnistEnsemble.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
     <a class="reference external" href="https://github.com/testingautomated-usi/uncertainty-wizard/blob/main/examples/MnistEnsemble.ipynb"><img alt="View on Github" src="https://img.shields.io/badge/source-open%20in%20github-lightgrey"></a>
    
+- **Multi-Device Ensemble**  
+    This shows an example on how to use uncertainty wizard lazy ensembles using multiple gpus in parallel.
+      
+    <a class="reference external" href="https://github.com/testingautomated-usi/uncertainty-wizard/blob/main/examples/multi_device.py"><img alt="View on Github" src="https://img.shields.io/badge/source-open%20in%20github-lightgrey"></a>
+
+    *Note: As this example is only applicable to machines with two gpus, we do not provide a colab link or jupyter notebook,
+    but instead a classical python script to be run locally.*
 
 More examples will be added when we get feedback from our first users about the steps they found non-obvious.
 In the meantime, you may want to check out the [Complete API Documentation](./complete_api).
