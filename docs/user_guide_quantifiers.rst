@@ -9,18 +9,18 @@ from DNN outputs:
    :caption: Use of quantifiers on uwiz models
 
     # Let's use a quantifier that calculates the entropy on a regression variable as uncertainty
-    predictions, entropy = model.predict_quantified(x_test, quantifier='regression-entropy')
+    predictions, entropy = model.predict_quantified(x_test, quantifier='predictive_entropy')
 
     # Equivalently, we can pass the quantifier as object
-    quantifier = uwiz.quantifiers.RegressionEntropy()
+    quantifier = uwiz.quantifiers.PredictiveEntropy()
     predictions, entropy = model.predict_quantified(x_test, quantifier=quantifer)
 
     # We can also pass multiple quantifiers.
     # In that case, `predict_quantified` returns a (prediction, confidence_or_uncertainty) tuple
     # for every passed quantifier.
-    results = model.predict_quantified(x_test, quantifier=['regression-entropy', 'standard_deviation')
+    results = model.predict_quantified(x_test, quantifier=['predictive_entropy', 'mean_softmax')
     # results[0] is a tuple of predictions and entropies
-    # results[1] is a tuple of predictions and standard deviations
+    # results[1] is a tuple of predictions and mean softmax values
 
 Besides the prediction, quantifiers quantify either the networks confidence or its uncertainty.
 The difference between that two is as follows
