@@ -34,51 +34,60 @@ It's as easy as `pip install uncertainty-wizard`
 
 #### Requirements
 - tensorflow >= 2.3.0
-- python 3.6* / 3.7 / 3.8
+- python 3.6* / 3.7 / 3.8 
 
 *python 3.6 requires to `pip install dataclasses`
 
 #### Documentation
 Our documentation is deployed to
 [uncertainty-wizard.readthedocs.io](https://uncertainty-wizard.readthedocs.io/).
+In addition, as uncertainty wizard has a 100% docstring coverage on public method and classes,
+your IDE will be able to provide you with a good amount of docs out of the box.
 
-Note that we have a 100% docstring coverage on public method and classes.
-Hence, your IDE will be able to provide you with a good amount of docs out of the box.
+You may also want to check out the technical tool paper [(preprint)](https://arxiv.org/abs/2101.00982),
+describing uncertainty wizard functionality and api as of version `0.1.0`.
 
 #### Examples
 A set of small and easy examples, perfect to get started can be found in the 
 [models user guide](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_models.html)
 and the [quantifiers user guide](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_quantifiers.html).
-
 Larger and examples are also provided - and you can run them in colab right away.
-You can find them here: [List of jupyter examples](https://uncertainty-wizard.readthedocs.io/en/latest/examples.html)
+You can find them here: [List of jupyter examples](https://uncertainty-wizard.readthedocs.io/en/latest/examples.html).
 
-#### Authors and Paper
-``uncertainty-wizard`` was developed by Michael Weiss and Paolo Tonella at USI (Lugano, Switzerland).
-An early version was first presented in the following paper 
-(preprint can be found [here](https://mweiss.ch/assets/papers/icst-2021-uncertainty-preprint.pdf)):  
+#### Authors and Papers
+<!--- Dont forget to update sphinx documentation when changing this paragraph -->
+Uncertainty wizard was developed by Michael Weiss and Paolo Tonella at USI (Lugano, Switzerland).
+If you use it for your research, please cite these papers:
 
-<details>  
-  <summary>Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring (expand for BibTex)</summary>  
-
-    @inproceedings{Weiss2021,  
+    @inproceedings{Weiss2021FailSafe,  
       title={Fail-Safe Execution of Deep Learning based Systems through Uncertainty Monitoring},  
       author={Weiss, Michael and Tonella, Paolo},  
-      booktitle={2021 IEEE 14th International Conference on Software Testing,   
-        Validation and Verification (ICST)},  
+      booktitle={2021 IEEE 14th International Conference on Software Testing, Validation and Verification (ICST)},  
       year={2021},  
       organization={IEEE},  
       note={forthcoming}  
     }  
 
-</details>
+    @inproceedings{Weiss2021UncertaintyWizard,  
+      title={Uncertainty-Wizard: Fast and User-Friendly Neural Network Uncertainty Quantification},  
+      author={Weiss, Michael and Tonella, Paolo},  
+      booktitle={2021 IEEE 14th International Conference on Software Testing, Validation and Verification (ICST)},  
+      year={2021},  
+      organization={IEEE},  
+      note={forthcoming}  
+    }  
 
-We are also currently writing a technical tool paper, describing design choices and challenges.
-We are happy to share a preprint upon request.
+The first paper [(preprint)](https://arxiv.org/abs/2102.00902) provides 
+an empricial study comparing the approaches implemented in uncertainty wizard,
+and a list of lessons learned useful for reasearchers working with uncertainty wizard.
+The second paper [(preprint)](https://arxiv.org/abs/2101.00982) is a technical tool paper,
+ providing a more detailed discussion of uncertainty wizards api and implementation.
+
+References to the original work introducing the techniques implemented 
+in uncertainty wizard are provided in the papers listed above.
 
 #### Contributing
 Issues and PRs are welcome! Before investing a lot of time for a PR, please open an issue first, describing your contribution.
 This way, we can make sure that the contribution fits well into this repository.
-
 We also mark issues which are great to start contributing as as [good first issues](https://github.com/testingautomated-usi/uncertainty-wizard/contribute).
 If you want to implement an existing issue, don't forget to comment on it s.t. everyone knows that you are working on it.
