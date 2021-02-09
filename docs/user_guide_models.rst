@@ -102,11 +102,15 @@ where a single model instance training does not use the full GPU resources,
 LazyEnsemble allows to create multiple concurrent tensorflow sessions, each running a dedicated model in parallel.
 The number of processes to be used can be specified on essentially all of LazyEnsembles methods.
 
-
 Models are loaded into a context, e.g. a gpu configuration which was configured before the model was loaded.
 The default context, if multiple processes are used, sets the GPU usage to dynamic memory growth.
 We recommend to set the number of processes conservatively, observe the system load
 and increase the number of processes if possible.
+
+If you use tensorflow in your main process, chances are the main thread allocates all available GPU resources.
+In such case you may for example want to enabling dynamic growth on the main thread,
+which can be done by calling the following utility method right after first importing tensorflow:
+``uwiz.models.ensemble_utils.DynamicGpuGrowthContextManager.enable_dynamic_gpu_growth()``
 
 .. warning::
    By using too many processes you will quickly exhaust your systems resources.
