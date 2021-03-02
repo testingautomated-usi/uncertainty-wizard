@@ -1,6 +1,7 @@
 /virtualenv/
 /.idea/
 /venv/
+/env/
 /uwiz.egg-info/
 /dist/
 /build/
