@@ -15,3 +15,4 @@
 /.coverage
 /uncertainty_wizard.egg-info/
 /examples/temp-ensemble.txt
+**/__pycache__/
