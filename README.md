@@ -45,14 +45,14 @@ In addition, as uncertainty wizard has a 100% docstring coverage on public metho
 your IDE will be able to provide you with a good amount of docs out of the box.
 
 You may also want to check out the technical tool paper [(preprint)](https://arxiv.org/abs/2101.00982),
-describing uncertainty wizard functionality and api as of version `0.1.0`.
+describing uncertainty wizard functionality and api as of version `v0.1.0`.
 
 #### Examples
 A set of small and easy examples, perfect to get started can be found in the 
 [models user guide](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_models.html)
 and the [quantifiers user guide](https://uncertainty-wizard.readthedocs.io/en/latest/user_guide_quantifiers.html).
 Larger and examples are also provided - and you can run them in colab right away.
-You can find them here: [List of jupyter examples](https://uncertainty-wizard.readthedocs.io/en/latest/examples.html).
+You can find them here: [Jupyter examples](https://uncertainty-wizard.readthedocs.io/en/latest/examples.html).
 
 #### Authors and Papers
 <!--- Dont forget to update sphinx documentation when changing this paragraph -->
