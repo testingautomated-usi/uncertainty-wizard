@@ -69,7 +69,7 @@ class VariationRatio(UncertaintyQuantifier):
 
     @classmethod
     def _sum_array_dtype(cls, num_samples):
-        """Selects an appropriate dtype (np.uint16 or np.uint8) based on the number of samples """
+        """Selects an appropriate dtype (np.uint16 or np.uint8) based on the number of samples"""
         # uint16 allows up to 65535 samples (which is way above reasonable for any problem)
         # If there are up to 255 samples per input, we can save half the memory using uint8
         sum_array_dtype = np.uint16
