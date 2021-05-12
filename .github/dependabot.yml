@@ -11,9 +11,9 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "*" 
-          update-types: ["version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "black"
-          update-types: ["version-update:semver-minor"]
+        update-types: ["version-update:semver-minor"]
       - dependency-name: "tensorflow" # Reason: We want backwards compatibility
           
         
