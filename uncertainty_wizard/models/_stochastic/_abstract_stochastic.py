@@ -264,7 +264,7 @@ class Stochastic(_UwizModel):
 
     @staticmethod
     def broadcast(sample_size: int, x: Union[tf.data.Dataset, np.ndarray]) -> tf.data.Dataset:
-        """Utility to repeate samples within a dataset.
+        """Utility to repeat samples within a dataset.
 
         A call to this method is typically not required by end user,
         as this method is internally called by predict_quantified.
