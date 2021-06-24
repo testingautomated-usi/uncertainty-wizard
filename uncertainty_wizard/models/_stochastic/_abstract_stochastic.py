@@ -73,14 +73,14 @@ class Stochastic(_UwizModel):
         return self.inner.call(inputs, training, mask)
 
     def compile(
-        self,
-        optimizer="rmsprop",
-        loss=None,
-        metrics=None,
-        loss_weights=None,
-        weighted_metrics=None,
-        run_eagerly=None,
-        expect_deterministic: bool = False,
+            self,
+            optimizer="rmsprop",
+            loss=None,
+            metrics=None,
+            loss_weights=None,
+            weighted_metrics=None,
+            run_eagerly=None,
+            expect_deterministic: bool = False,
     ):
         """
         This wraps the tf.keras.Model.compile method, but checks before if a stochastic layer was added to the model:
@@ -103,9 +103,9 @@ class Stochastic(_UwizModel):
             is_stochastic = False
             for layer in self.inner.layers:
                 if (
-                    isinstance(layer, layers.UwizGaussianNoise)
-                    or isinstance(layer, layers.UwizBernoulliDropout)
-                    or isinstance(layer, layers.UwizGaussianDropout)
+                        isinstance(layer, layers.UwizGaussianNoise)
+                        or isinstance(layer, layers.UwizBernoulliDropout)
+                        or isinstance(layer, layers.UwizGaussianDropout)
                 ):
                     is_stochastic = True
                     break
@@ -177,13 +177,13 @@ class Stochastic(_UwizModel):
         return self.inner.summary
 
     def save(
-        self,
-        filepath: str,
-        overwrite: bool = True,
-        include_optimizer: bool = True,
-        save_format: str = None,
-        signatures=None,
-        options=None,
+            self,
+            filepath: str,
+            overwrite: bool = True,
+            include_optimizer: bool = True,
+            save_format: str = None,
+            signatures=None,
+            options=None,
     ):
         """
         Save the model to file, as on plain tf models. Note that you must not use the h5 file format.
@@ -198,10 +198,10 @@ class Stochastic(_UwizModel):
         # Append the keras documentation
         Stochastic.save.__doc__ += tf.keras.Model.save.__doc__
         assert (
-            not filepath.lower().endswith("h5")
-            and not filepath.lower().endswith("hdf5")
-            and not filepath.lower().endswith(".keras")
-            and (save_format is None or not save_format.lower() == "h5")
+                not filepath.lower().endswith("h5")
+                and not filepath.lower().endswith("hdf5")
+                and not filepath.lower().endswith(".keras")
+                and (save_format is None or not save_format.lower() == "h5")
         ), (
             "Uncertainty Wizard does not support the deprecated h5 format to save models."
             "Change the file ending or the save_format parameter to save using the better tf `SavedModel` format."
@@ -225,7 +225,7 @@ class Stochastic(_UwizModel):
 
     @classmethod
     def _replace_layer_if_possible(
-        cls, layer, stochastic_mode
+            cls, layer, stochastic_mode
     ) -> tf.keras.layers.Layer:
         if isinstance(layer, tf.keras.layers.Dropout):
             return UwizBernoulliDropout.from_keras_layer(
@@ -244,7 +244,7 @@ class Stochastic(_UwizModel):
             return layer
 
     def _get_scores(
-        self, x, batch_size: int, verbose, steps, sample_size
+            self, x, batch_size: int, verbose, steps, sample_size
     ) -> np.ndarray:
         inputs = self.broadcast(sample_size, x)
 
@@ -263,8 +263,19 @@ class Stochastic(_UwizModel):
         return outputs.reshape(output_shape)
 
     @staticmethod
-    def broadcast(sample_size: int, x: Union[tf.data.Dataset, np.ndarray]):
+    def broadcast(sample_size: int, x: Union[tf.data.Dataset, np.ndarray]) -> tf.data.Dataset:
+        """Utility to repeate samples within a dataset.
 
+        A call to this method is typically not required by end user,
+        as this method is internally called by predict_quantified.
+
+        Note, broadcasting is not optimized for performance, to allow
+        an easy support of a wide variety of input types (including multi-inputs)
+        pipelines.
+
+        :param sample_size: The number of times to repeat each input
+        :param x: The dataset of samples to repeat
+        :returns: The created dataset. Always a tf.data.Dataset, independent on input."""
         # Repeat every input `sample_size` many times in-place
         num_samples_tensor = tf.reshape(tf.constant(sample_size), [1])
         tensor_one = tf.reshape(tf.constant(1), [1])
@@ -320,15 +331,15 @@ class Stochastic(_UwizModel):
         return broadcasted.unbatch()
 
     def predict_quantified(
-        self,
-        x: Union[tf.data.Dataset, np.ndarray],
-        quantifier: Union[Quantifier, str, Iterable[Union[str, Quantifier]]],
-        # Other Sequential.predict params (e.g. Callbacks) are not yet supported
-        sample_size: int = 64,
-        batch_size: int = 32,
-        verbose: int = 0,
-        steps=None,
-        as_confidence: Union[None, bool] = None,
+            self,
+            x: Union[tf.data.Dataset, np.ndarray],
+            quantifier: Union[Quantifier, str, Iterable[Union[str, Quantifier]]],
+            # Other Sequential.predict params (e.g. Callbacks) are not yet supported
+            sample_size: int = 64,
+            batch_size: int = 32,
+            verbose: int = 0,
+            steps=None,
+            as_confidence: Union[None, bool] = None,
     ):
         """
         Calculates predictions and uncertainties (or confidences) according to the passed quantifer(s).
@@ -382,7 +393,7 @@ class Stochastic(_UwizModel):
 
     @staticmethod
     def _run_quantifiers(
-        as_confidence, point_prediction_scores, quantifiers, stochastic_scores
+            as_confidence, point_prediction_scores, quantifiers, stochastic_scores
     ):
         results = []
         for q in quantifiers:
