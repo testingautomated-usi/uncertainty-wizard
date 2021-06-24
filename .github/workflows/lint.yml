@@ -40,4 +40,4 @@ jobs:
 
       - name: Docstring Coverage
         run: |
-          docstr-coverage uncertainty_wizard --skipfiledoc --skip-private --failunder=100
+          docstr-coverage uncertainty_wizard
