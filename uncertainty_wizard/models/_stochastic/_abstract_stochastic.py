@@ -285,16 +285,16 @@ class Stochastic(_UwizModel):
         def _expand_to_sample_size(*args):
             if len(args) == 1 and tf.is_tensor(args[0]):
                 return _broadcast_tensor(tensor=args[0])
+            if len(args) == 1 and isinstance(args[0], dict):
+                res_elem = dict()
+                for k, v in args[0].items():
+                    assert tf.is_tensor(v), "unsupported tf.data format"
+                    res_elem[k] = _broadcast_tensor(tensor=v)
+                return res_elem
             res = []
             for arg in args:
                 if tf.is_tensor(arg):
                     res.append(_broadcast_tensor(tensor=arg))
-                elif isinstance(arg, dict):
-                    res_elem = dict()
-                    for k, v in arg.items():
-                        assert tf.is_tensor(v), "unsupported tf.data format"
-                        res_elem[k] = _broadcast_tensor(tensor=arg)
-                    res.append(res_elem)
                 else:
                     raise ValueError(
                         f"Passed tensoflow datasets must consist of tensors, "
