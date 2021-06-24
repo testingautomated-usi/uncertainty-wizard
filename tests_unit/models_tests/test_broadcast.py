@@ -58,3 +58,22 @@ class BroadcastingTest(TestCase):
             self.assertEqual(e['b'], np.floor(i / 10) + 100)
             count += 1
         self.assertEqual(count, 100 * 10)
+
+    def test_multi_input_model(self):
+        # Dummy Model
+        inputs = [tf.keras.Input((1,), name="a"), tf.keras.Input((1,), name="b")]
+        combined = inputs[0] + inputs[1]
+        dropped = tf.keras.layers.Dropout(0.5)(combined)
+        output = tf.keras.layers.Dense(1)(dropped)
+        model = tf.keras.Model(inputs=inputs, outputs=output)
+
+        # Dummy Dataset
+        dataset = tf.data.Dataset.zip((
+            tf.data.Dataset.from_tensor_slices(tf.zeros((10, 1))),
+            tf.data.Dataset.from_tensor_slices(tf.ones((10, 1))),
+        )).map(lambda x, y: {"a": x, "b": y})
+
+        stochastic_model = uwiz.models.stochastic_from_keras(model)
+        pred, unc = stochastic_model.predict_quantified(dataset,
+                                                        quantifier='var_ratio',
+                                                        sample_size=16)
