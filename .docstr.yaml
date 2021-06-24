@@ -1,0 +1,8 @@
+paths: # list or string
+  - uncertainty_wizard
+skip_magic: True # Boolean
+skip_file_doc: True # Boolean
+skip_init: True # Boolean
+skip_private: True # Boolean
+skip_class_def: True
+fail-under: 100
