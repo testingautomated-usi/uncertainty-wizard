@@ -246,32 +246,7 @@ class Stochastic(_UwizModel):
     def _get_scores(
         self, x, batch_size: int, verbose, steps, sample_size
     ) -> np.ndarray:
-        if isinstance(x, tf.data.Dataset):
-            logging.debug(
-                "You passed a tf.data.Dataset to predict_quantified in a stochastic model."
-                "tf.data.Datasets passed to this method must not be batched. We take care of the batching."
-                "Please make sure that your dataset is not batched (we can not check that)"
-            )
-            x_as_ds = x
-        elif isinstance(x, np.ndarray):
-            x_as_ds = tf.data.Dataset.from_tensor_slices(x)
-        else:
-            raise ValueError(
-                "At the moment, uwiz stochastic models support only (unbatched)"
-                "numpy arrays and tf.data.Datasets as inputs. "
-                "Please transform your input in one of these forms."
-            )
-
-        # Repeat every input `sample_size` many times in-place
-        num_samples_tensor = tf.reshape(tf.constant(sample_size), [1])
-
-        @tf.function
-        @tf.autograph.experimental.do_not_convert
-        def _expand_to_sample_size(inp):
-            shape = tf.concat((num_samples_tensor, tf.shape(inp)), axis=0)
-            return tf.broadcast_to(input=inp, shape=shape)
-
-        inputs = x_as_ds.map(_expand_to_sample_size).unbatch()
+        inputs = self.broadcast(sample_size, x)
 
         # Batch the resulting dataset
         inputs = inputs.batch(batch_size=batch_size)
@@ -287,6 +262,63 @@ class Stochastic(_UwizModel):
         output_shape[1] = sample_size
         return outputs.reshape(output_shape)
 
+    @staticmethod
+    def broadcast(sample_size: int, x: Union[tf.data.Dataset, np.ndarray]):
+
+        # Repeat every input `sample_size` many times in-place
+        num_samples_tensor = tf.reshape(tf.constant(sample_size), [1])
+        tensor_one = tf.reshape(tf.constant(1), [1])
+
+        @tf.function
+        @tf.autograph.experimental.do_not_convert
+        def _expand_to_sample_size(*args):
+            if len(args) == 1 and tf.is_tensor(args[0]):
+                return _broadcast_tensor(tensor=args[0])
+            res = []
+            for arg in args:
+                if tf.is_tensor(arg):
+                    res.append(_broadcast_tensor(tensor=arg))
+                elif isinstance(arg, dict):
+                    res_elem = dict()
+                    for k, v in arg.items():
+                        assert tf.is_tensor(v), "unsupported tf.data format"
+                        res_elem[k] = _broadcast_tensor(tensor=arg)
+                    res.append(res_elem)
+                else:
+                    raise ValueError(
+                        f"Passed tensoflow datasets must consist of tensors, "
+                        "tuples of tensors or named tensors. Was {arg}"
+                    )
+            return res
+
+        @tf.function
+        @tf.autograph.experimental.do_not_convert
+        def _broadcast_tensor(tensor):
+            if tensor.shape == ():
+                shape = tf.concat((num_samples_tensor, tensor_one), axis=0)
+            else:
+                shape = tf.concat((num_samples_tensor, tf.shape(tensor)), axis=0)
+            return tf.broadcast_to(input=tensor, shape=shape)
+
+        if isinstance(x, tf.data.Dataset):
+            logging.debug(
+                "You passed a tf.data.Dataset to predict_quantified in a stochastic model."
+                "tf.data.Datasets passed to this method must not be batched. We take care of the batching."
+                "Please make sure that your dataset is not batched (we can not check that)"
+            )
+            broadcasted = x.map(_expand_to_sample_size)
+        elif isinstance(x, np.ndarray):
+            x_as_ds = tf.data.Dataset.from_tensor_slices(x)
+            broadcasted = x_as_ds.map(_broadcast_tensor)
+        else:
+            raise ValueError(
+                "At the moment, uwiz stochastic models support only (unbatched)"
+                "numpy arrays and tf.data.Datasets as inputs. "
+                "Please transform your input in one of these forms."
+            )
+
+        return broadcasted.unbatch()
+
     def predict_quantified(
         self,
         x: Union[tf.data.Dataset, np.ndarray],
@@ -300,9 +332,11 @@ class Stochastic(_UwizModel):
     ):
         """
         Calculates predictions and uncertainties (or confidences) according to the passed quantifer(s).
+
         Sampling is done internally.
         Both point-predictor and sampling based quantifiers can be used in the same method call.
         Uwiz automatically enables and disables the randomness of the model accordingly.
+
         :param x: The inputs for which the predictions should be made. tf.data.Dataset (unbatched) or numpy array.
         :param quantifier: The quantifier or quantifier alias to use (or a collection of them)
         :param sample_size: The number of samples to be used for sample-expecting quantifiers
