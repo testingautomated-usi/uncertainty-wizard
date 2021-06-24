@@ -1,0 +1,8 @@
+paths:
+  - uncertainty_wizard
+skip_magic: True
+skip_file_doc: True
+skip_init: True
+skip_private: True
+skip_class_def: True
+fail-under: 100
