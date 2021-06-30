@@ -19,12 +19,12 @@
     </a>
 </p>
 
-<p align="center">
-    :tada:
-    :1st_place_medal: 
-    uncertainty-wizard won the <b>best paper award</b> in the testing tool track at ICST 2021
-    :1st_place_medal:
-    :tada:
+<p align="center" style="  height: 40px;  line-height: 40px">
+    <img src="https://github.githubassets.com/images/icons/emoji/unicode/1f389.png" height=40px/>
+    <img src="https://github.githubassets.com/images/icons/emoji/unicode/1f947.png" height=40px/>
+    Best Paper Award at ICST 2021 - Testing Tool Track
+    <img src="https://github.githubassets.com/images/icons/emoji/unicode/1f947.png" height=40px/>
+    <img src="https://github.githubassets.com/images/icons/emoji/unicode/1f389.png" height=40px/>
 </p>
 
 Uncertainty wizard is a plugin on top of `tensorflow.keras`,
