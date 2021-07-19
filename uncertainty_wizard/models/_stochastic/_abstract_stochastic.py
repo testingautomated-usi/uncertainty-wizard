@@ -1,5 +1,4 @@
 import abc
-import logging
 import warnings
 from typing import Iterable, Union
 
@@ -10,6 +9,7 @@ from uncertainty_wizard.internal_utils import UncertaintyWizardWarning
 from uncertainty_wizard.models._stochastic._stochastic_mode import StochasticMode
 from uncertainty_wizard.models._uwiz_model import _UwizModel
 from uncertainty_wizard.models.stochastic_utils import layers
+from uncertainty_wizard.models.stochastic_utils.broadcaster import Broadcaster, DefaultBroadcaster
 from uncertainty_wizard.models.stochastic_utils.layers import (
     UwizBernoulliDropout,
     UwizGaussianDropout,
@@ -73,14 +73,14 @@ class Stochastic(_UwizModel):
         return self.inner.call(inputs, training, mask)
 
     def compile(
-        self,
-        optimizer="rmsprop",
-        loss=None,
-        metrics=None,
-        loss_weights=None,
-        weighted_metrics=None,
-        run_eagerly=None,
-        expect_deterministic: bool = False,
+            self,
+            optimizer="rmsprop",
+            loss=None,
+            metrics=None,
+            loss_weights=None,
+            weighted_metrics=None,
+            run_eagerly=None,
+            expect_deterministic: bool = False,
     ):
         """
         This wraps the tf.keras.Model.compile method, but checks before if a stochastic layer was added to the model:
@@ -103,9 +103,9 @@ class Stochastic(_UwizModel):
             is_stochastic = False
             for layer in self.inner.layers:
                 if (
-                    isinstance(layer, layers.UwizGaussianNoise)
-                    or isinstance(layer, layers.UwizBernoulliDropout)
-                    or isinstance(layer, layers.UwizGaussianDropout)
+                        isinstance(layer, layers.UwizGaussianNoise)
+                        or isinstance(layer, layers.UwizBernoulliDropout)
+                        or isinstance(layer, layers.UwizGaussianDropout)
                 ):
                     is_stochastic = True
                     break
@@ -177,13 +177,13 @@ class Stochastic(_UwizModel):
         return self.inner.summary
 
     def save(
-        self,
-        filepath: str,
-        overwrite: bool = True,
-        include_optimizer: bool = True,
-        save_format: str = None,
-        signatures=None,
-        options=None,
+            self,
+            filepath: str,
+            overwrite: bool = True,
+            include_optimizer: bool = True,
+            save_format: str = None,
+            signatures=None,
+            options=None,
     ):
         """
         Save the model to file, as on plain tf models. Note that you must not use the h5 file format.
@@ -198,10 +198,10 @@ class Stochastic(_UwizModel):
         # Append the keras documentation
         Stochastic.save.__doc__ += tf.keras.Model.save.__doc__
         assert (
-            not filepath.lower().endswith("h5")
-            and not filepath.lower().endswith("hdf5")
-            and not filepath.lower().endswith(".keras")
-            and (save_format is None or not save_format.lower() == "h5")
+                not filepath.lower().endswith("h5")
+                and not filepath.lower().endswith("hdf5")
+                and not filepath.lower().endswith(".keras")
+                and (save_format is None or not save_format.lower() == "h5")
         ), (
             "Uncertainty Wizard does not support the deprecated h5 format to save models."
             "Change the file ending or the save_format parameter to save using the better tf `SavedModel` format."
@@ -225,7 +225,7 @@ class Stochastic(_UwizModel):
 
     @classmethod
     def _replace_layer_if_possible(
-        cls, layer, stochastic_mode
+            cls, layer, stochastic_mode
     ) -> tf.keras.layers.Layer:
         if isinstance(layer, tf.keras.layers.Dropout):
             return UwizBernoulliDropout.from_keras_layer(
@@ -243,60 +243,22 @@ class Stochastic(_UwizModel):
             # The passed layer is not replaceable with a stochastic layer
             return layer
 
-    def _get_scores(
-        self, x, batch_size: int, verbose, steps, sample_size
-    ) -> np.ndarray:
-        if isinstance(x, tf.data.Dataset):
-            logging.debug(
-                "You passed a tf.data.Dataset to predict_quantified in a stochastic model."
-                "tf.data.Datasets passed to this method must not be batched. We take care of the batching."
-                "Please make sure that your dataset is not batched (we can not check that)"
-            )
-            x_as_ds = x
-        elif isinstance(x, np.ndarray):
-            x_as_ds = tf.data.Dataset.from_tensor_slices(x)
-        else:
-            raise ValueError(
-                "At the moment, uwiz stochastic models support only (unbatched)"
-                "numpy arrays and tf.data.Datasets as inputs. "
-                "Please transform your input in one of these forms."
-            )
-
-        # Repeat every input `sample_size` many times in-place
-        num_samples_tensor = tf.reshape(tf.constant(sample_size), [1])
-
-        @tf.function
-        @tf.autograph.experimental.do_not_convert
-        def _expand_to_sample_size(inp):
-            shape = tf.concat((num_samples_tensor, tf.shape(inp)), axis=0)
-            return tf.broadcast_to(input=inp, shape=shape)
-
-        inputs = x_as_ds.map(_expand_to_sample_size).unbatch()
-
-        # Batch the resulting dataset
-        inputs = inputs.batch(batch_size=batch_size)
-
-        # Make predictions.
-        if steps is not None:
-            steps = steps * sample_size
-        outputs = self.inner.predict(inputs, verbose=verbose, steps=steps)
-
-        # Reshape sampled predictions, grouping by sample (such that outputs[i] contains all samples for input i
-        output_shape = list(outputs.shape)
-        output_shape.insert(0, -1)
-        output_shape[1] = sample_size
-        return outputs.reshape(output_shape)
+    def _get_scores(self, x, broadcaster: Broadcaster) -> np.ndarray:
+        inputs = broadcaster.broadcast_inputs(x=x)
+        predictions = broadcaster.predict(model=self.inner, inputs=inputs)
+        return broadcaster.reshape_outputs(outputs=predictions)
 
     def predict_quantified(
-        self,
-        x: Union[tf.data.Dataset, np.ndarray],
-        quantifier: Union[Quantifier, str, Iterable[Union[str, Quantifier]]],
-        # Other Sequential.predict params (e.g. Callbacks) are not yet supported
-        sample_size: int = 64,
-        batch_size: int = 32,
-        verbose: int = 0,
-        steps=None,
-        as_confidence: Union[None, bool] = None,
+            self,
+            x: Union[tf.data.Dataset, np.ndarray],
+            quantifier: Union[Quantifier, str, Iterable[Union[str, Quantifier]]],
+            # Other Sequential.predict params (e.g. Callbacks) are not yet supported
+            sample_size: int = 64,
+            batch_size: int = 32,
+            verbose: int = 0,
+            steps=None,
+            as_confidence: Union[None, bool] = None,
+            broadcaster: Broadcaster = None,
     ):
         """
         Calculates predictions and uncertainties (or confidences) according to the passed quantifer(s).
@@ -311,6 +273,7 @@ class Stochastic(_UwizModel):
         :param steps: Predictions steps, as in tf.keras.Model.fit. Is adapted according to chosen sample size.
         :param as_confidence: If true, uncertainties are multiplied by (-1),
         if false, confidences are multiplied by (-1). Default: No transformations.
+        :param broadcaster: Sampling Related Dependencies. If None, the DefaultBroadcaster will be used.
         :return: A tuple (predictions, uncertainties_or_confidences) if a single quantifier was
         passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
         """
@@ -325,12 +288,19 @@ class Stochastic(_UwizModel):
             sample_size, samples_based_quantifiers=sample_q
         )
 
+        if broadcaster is None:
+            broadcaster = DefaultBroadcaster(
+                batch_size=batch_size,
+                verbose=verbose,
+                steps=steps,
+                sample_size=sample_size,
+            )
         stochastic_scores, point_prediction_scores = None, None
         if len(sample_q) > 0:
             self.stochastic_mode_tensor.assign(True)
-            stochastic_scores = self._get_scores(
-                x, batch_size, verbose, steps, sample_size
-            )
+            inputs = broadcaster.broadcast_inputs(x=x)
+            predictions = broadcaster.predict(model=self.inner, inputs=inputs)
+            broadcaster.reshape_outputs(outputs=predictions)
             self.stochastic_mode_tensor.assign(False)
         if len(pp_q) > 0:
             if isinstance(x, tf.data.Dataset):
@@ -348,7 +318,7 @@ class Stochastic(_UwizModel):
 
     @staticmethod
     def _run_quantifiers(
-        as_confidence, point_prediction_scores, quantifiers, stochastic_scores
+            as_confidence, point_prediction_scores, quantifiers, stochastic_scores
     ):
         results = []
         for q in quantifiers:
