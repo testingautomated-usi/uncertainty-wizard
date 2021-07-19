@@ -300,7 +300,7 @@ class Stochastic(_UwizModel):
             self.stochastic_mode_tensor.assign(True)
             inputs = broadcaster.broadcast_inputs(x=x)
             predictions = broadcaster.predict(model=self.inner, inputs=inputs)
-            broadcaster.reshape_outputs(outputs=predictions)
+            stochastic_scores = broadcaster.reshape_outputs(outputs=predictions)
             self.stochastic_mode_tensor.assign(False)
         if len(pp_q) > 0:
             if isinstance(x, tf.data.Dataset):

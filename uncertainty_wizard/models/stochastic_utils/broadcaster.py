@@ -52,9 +52,10 @@ class DefaultBroadcaster(Broadcaster):
     def broadcast_inputs(self, x, **kwargs) -> tf.data.Dataset:
         if isinstance(x, tf.data.Dataset):
             logging.debug(
-                "You passed a tf.data.Dataset to predict_quantified in a stochastic model."
+                "You passed a tf.data.Dataset to predict_quantified in a stochastic model"
+                "using the default broadcaster."
                 "tf.data.Datasets passed to this method must not be batched. We take care of the batching."
-                "Please make sure that your dataset is not batched (we can not check that)"
+                "Please make sure that your dataset is not batched (we can not check that)."
             )
             x_as_ds = x
         elif isinstance(x, np.ndarray):
@@ -63,10 +64,10 @@ class DefaultBroadcaster(Broadcaster):
             raise ValueError(
                 "At the moment, uwiz stochastic models support only (unbatched)"
                 "numpy arrays and tf.data.Datasets as inputs. "
-                "Please transform your input in one of these forms."
+                "Please transform your input in one of these forms or inject a custom broadcaster."
             )
 
-            # Repeat every input `sample_size` many times in-place
+        # Repeat every input `sample_size` many times in-place
         num_samples_tensor = tf.reshape(tf.constant(self.sample_size), [1])
 
         @tf.function
