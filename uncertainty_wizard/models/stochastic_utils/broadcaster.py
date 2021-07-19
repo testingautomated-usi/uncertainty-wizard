@@ -7,48 +7,57 @@ import tensorflow as tf
 
 
 class Broadcaster(abc.ABC):
+    """Abstract class to inject sampling-related logic"""
 
-    def __init__(self,
-                 batch_size: int,
-                 verbose,
-                 steps,
-                 sample_size,
-                 **kwargs):
+    def __init__(self, batch_size: int, verbose, steps, sample_size, **kwargs):
         self.batch_size = batch_size
         self.verbose = verbose
         self.steps = steps
         self.sample_size = sample_size
 
     @abc.abstractmethod
-    def broadcast_inputs(self,
-                         x,
-                         **kwargs) -> Any:
+    def broadcast_inputs(self, x, **kwargs) -> Any:
+        """Replicates every input in x `num_samples` times.
+
+        Replication should happen in place. For example,
+        inputs [a,b,c] with sample size 3 should lead to output
+        [a,a,a,b,b,b,c,c,c] and not [a,b,c,a,b,c,a,b,c].
+
+        The return type is arbitrary, but typically a `tf.data.Dataset`.
+        It will be used as `inputs` to `self.predict`.
+        """
         pass
 
     @abc.abstractmethod
-    def predict(self,
-                model: tf.keras.Model,
-                inputs: Any) -> Any:
+    def predict(self, model: tf.keras.Model, inputs: Any) -> Any:
+        """Returns predictions for the given inputs on the passed model"""
         pass
 
     @abc.abstractmethod
-    def reshape_outputs(self,
-                        outputs: np.ndarray,
-                        **kwargs) -> Any:
+    def reshape_outputs(self, outputs: np.ndarray, **kwargs) -> Any:
+        """Reshape predictions to be used by sampling based quantifiers.
+
+        For the default sampling-based quantifiers shipped with uwiz, such as
+        `uwiz.quantifiers.VariationRatio`, predictions are expected to have the shape
+        (num_inputs, num_samples, ...).
+        The outputs of `self.predict` typically have shape (num_inputs * num_samples, ...).
+        It's this methods responsibility to bring the inputs to the right shape.
+        """
         pass
 
 
 class DefaultBroadcaster(Broadcaster):
+    """Implements a Default Broadcaster, supporting the most typical usecases."""
 
+    # docstr-coverage:inherited
     def predict(self, model: tf.keras.Model, inputs: Any) -> Any:
         if self.steps is None:
             steps = None
         else:
             steps = self.steps * self.sample_size
-        return model.predict(inputs,
-                             verbose=self.verbose,
-                             steps=steps)
+        return model.predict(inputs, verbose=self.verbose, steps=steps)
 
+    # docstr-coverage:inherited
     def broadcast_inputs(self, x, **kwargs) -> tf.data.Dataset:
         if isinstance(x, tf.data.Dataset):
             logging.debug(
@@ -81,6 +90,7 @@ class DefaultBroadcaster(Broadcaster):
         # Batch the resulting dataset
         return inputs.batch(batch_size=self.batch_size)
 
+    # docstr-coverage:inherited
     def reshape_outputs(self, outputs: np.ndarray, **kwargs) -> np.ndarray:
         output_shape = list(outputs.shape)
         output_shape.insert(0, -1)
