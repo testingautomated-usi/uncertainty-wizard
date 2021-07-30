@@ -123,10 +123,18 @@ Then, predictions will be made in the main process on the main tensorflow sessio
 
 **The LazyEnsemble Interface & Workflow**
 
-LazyEnsemble exposes four central functions: create, modify, consume and quantify_predictions.
+LazyEnsemble exposes five central functions:
+``create``
+``modify``
+``consume``
+``quantify_predictions``
+``run_model_free``
+create, modify, consume, quantify_predictions or run_model_free.
 In general, every of these functions expects a picklable function as input
 which either creates, modifies or consumes a plain keras model, or uses it to make predictions.
-Please refer to the specific methods documentation and examples for details.
+Please refer to the
+[specific methods documentation](https://uncertainty-wizard.readthedocs.io/en/latest/source/uncertainty_wizard.models.html#uncertainty_wizard.models.LazyEnsemble)
+and examples for details.
 
 Furthermore LazyEnsemble exposes utility methods wrapping the above listed methods,
 e.g. fit and predict_quantified, which expect numpy array inputs and automatically
