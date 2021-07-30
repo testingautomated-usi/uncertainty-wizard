@@ -26,12 +26,10 @@ class Broadcaster(abc.ABC):
         The return type is arbitrary, but typically a `tf.data.Dataset`.
         It will be used as `inputs` to `self.predict`.
         """
-        pass
 
     @abc.abstractmethod
     def predict(self, model: tf.keras.Model, inputs: Any) -> Any:
         """Returns predictions for the given inputs on the passed model"""
-        pass
 
     @abc.abstractmethod
     def reshape_outputs(self, outputs: np.ndarray, **kwargs) -> Any:
@@ -43,7 +41,6 @@ class Broadcaster(abc.ABC):
         The outputs of `self.predict` typically have shape (num_inputs * num_samples, ...).
         It's this methods responsibility to bring the inputs to the right shape.
         """
-        pass
 
 
 class DefaultBroadcaster(Broadcaster):
