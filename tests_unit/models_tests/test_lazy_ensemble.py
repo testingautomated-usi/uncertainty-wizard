@@ -28,6 +28,10 @@ def dummy_predict_process(model_id: int, model: tf.keras.Model):
     return model.predict(np.ones((10, 1000)))
 
 
+def dummy_independent_task(model_id: int):
+    return model_id
+
+
 # Note: So far we have mostly smoke tests.
 class LazyEnsembleTest(TestCase):
     def test_dummy_in_distinct_process(self):
@@ -122,6 +126,9 @@ class LazyEnsembleTest(TestCase):
         )
         self.assertTrue(np.all(lazy_pred_p == np_based_pred_p))
         self.assertTrue(np.all(lazy_pred_std == np_based_std))
+
+        returned_ids = ensemble.run_model_free(task=dummy_independent_task)
+        self.assertTrue(returned_ids == [0, 1], f"returned was: {returned_ids}")
 
     def test_main_smoke_full(self):
         self.smoke_full(0)
