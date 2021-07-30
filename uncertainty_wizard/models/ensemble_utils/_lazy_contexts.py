@@ -463,7 +463,7 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
         os.remove(cls._lock_file_path())
 
 
-class CpuOnlyContext(EnsembleContextManager):
+class CpuOnlyContextManager(EnsembleContextManager):
     """
     Disables all GPU use, and runs all processes on the CPU
 
@@ -472,7 +472,7 @@ class CpuOnlyContext(EnsembleContextManager):
     """
 
     # docstr-coverage:inherited
-    def __enter__(self) -> "CpuOnlyContext":
+    def __enter__(self) -> "CpuOnlyContextManager":
         self.disable_all_gpus()
         return self
 
