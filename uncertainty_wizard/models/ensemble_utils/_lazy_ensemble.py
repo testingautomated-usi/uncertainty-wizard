@@ -72,6 +72,22 @@ def _model_consuming_process(
     return ret_container
 
 
+# the save_config is not used, but a parameter for consistency with other process functions
+# noinspection PyUnusedLocal
+def _model_independent_process(
+    model_id: int,
+    save_config: SaveConfig,
+    inner_func: Callable[[int], Any],
+    context: Callable[[int, dict], EnsembleContextManager],
+):
+    # No varargs yet. This is a placeholder for future version extensions
+    varargs = dict()
+    # No custom methods called on ctxt yet. But this may change in future versions.
+    with context(model_id, varargs):
+        ret_container = inner_func(model_id)
+    return ret_container
+
+
 def config_file_path(path):
     """
     Constructs the path of the config file for ensemble saving.
@@ -271,6 +287,29 @@ class LazyEnsemble(_UwizModel):
         return self._run_in_processes(
             process_creator=_model_consuming_process,
             inner_function=consume_function,
+            num_processes=num_processes,
+            context=context,
+        )
+
+    def run_model_free(
+        self,
+        task: Callable[[int], T],
+        num_processes: int = None,
+        context: Callable[[int], EnsembleContextManager] = None,
+    ) -> List[T]:
+        """
+        Runs a task for every model, but without actually loading or persisting any model
+
+        :param task: The picklable function to be run for every model.
+        :param num_processes: The number of processes to use.
+            Default: The default or value specified when creating the lazy ensemble.
+        :param context: A contextmanager which prepares a newly crated process for execution
+            (e.g. by configuring the gpus). See class docstring for explanation of default values.
+        :return: The reports returned by the create_function executions.
+        """
+        return self._run_in_processes(
+            process_creator=_model_independent_process,
+            inner_function=task,
             num_processes=num_processes,
             context=context,
         )
