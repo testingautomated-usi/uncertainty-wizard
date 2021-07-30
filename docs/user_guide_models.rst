@@ -133,7 +133,7 @@ create, modify, consume, quantify_predictions or run_model_free.
 In general, every of these functions expects a picklable function as input
 which either creates, modifies or consumes a plain keras model, or uses it to make predictions.
 Please refer to the
-[specific methods documentation](https://uncertainty-wizard.readthedocs.io/en/latest/source/uncertainty_wizard.models.html#uncertainty_wizard.models.LazyEnsemble)
+`specific methods documentation <https://uncertainty-wizard.readthedocs.io/en/latest/source/uncertainty_wizard.models.html#uncertainty_wizard.models.LazyEnsemble>`_
 and examples for details.
 
 Furthermore LazyEnsemble exposes utility methods wrapping the above listed methods,
