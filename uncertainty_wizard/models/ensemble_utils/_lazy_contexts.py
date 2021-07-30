@@ -164,6 +164,7 @@ class CpuOnlyContextManager(EnsembleContextManager):
 
     @staticmethod
     def disable_all_gpus():
+        """Makes sure no GPUs are visible"""
         os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
         try:
             # Disable all GPUS
