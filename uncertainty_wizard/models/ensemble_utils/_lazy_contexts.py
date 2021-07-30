@@ -232,7 +232,7 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
         if number_of_tasks_in_this_process == 0:
             device_id = self._get_availabilities_and_choose_device()
             if device_id == -1:
-                CpuOnlyContext.disable_all_gpus()
+                CpuOnlyContextManager.disable_all_gpus()
             else:
                 self._use_gpu(index=device_id)
         else:
