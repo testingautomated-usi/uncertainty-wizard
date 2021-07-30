@@ -72,8 +72,11 @@ def _model_consuming_process(
     return ret_container
 
 
+# the save_config is not used, but a parameter for consistency with other process functions
+# noinspection PyUnusedLocal
 def _model_independent_process(
     model_id: int,
+    save_config: SaveConfig,
     inner_func: Callable[[int], Any],
     context: Callable[[int, dict], EnsembleContextManager],
 ):
