@@ -105,7 +105,7 @@ class EnsembleContextManager(abc.ABC):
     # Inspection disabled as overriding child classes may want to use 'self'
     # noinspection PyMethodMayBeStatic
     def save_single_model(
-        self, model_id: int, model: tf.keras.Model, save_config: SaveConfig
+            self, model_id: int, model: tf.keras.Model, save_config: SaveConfig
     ) -> None:
         """
         This method will be called to store a single atomic model in the ensemble.
@@ -121,7 +121,7 @@ class EnsembleContextManager(abc.ABC):
     # Inspection disabled as overriding child classes may want to use 'self'
     # noinspection PyMethodMayBeStatic
     def load_single_model(
-        self, model_id: int, save_config: SaveConfig
+            self, model_id: int, save_config: SaveConfig
     ) -> tf.keras.Model:
         """
         This method will be called to load a single atomic model in the ensemble.
@@ -204,7 +204,7 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
         if number_of_tasks_in_this_process == 0:
             device_id = self._get_availabilities_and_choose_device()
             if device_id == -1:
-                self._use_cpu()
+                CpuOnlyContext.disable_all_gpus()
             else:
                 self._use_gpu(index=device_id)
         else:
@@ -418,18 +418,6 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
                 f"on gpu {index} and memory limit {size}MB"
             ) from e
 
-    @classmethod
-    def _use_cpu(cls):
-        try:
-            # Disable all GPUS
-            tf.config.set_visible_devices([], "GPU")
-            visible_devices = tf.config.get_visible_devices()
-            for device in visible_devices:
-                assert device.device_type != "GPU"
-        except RuntimeError as e:
-            raise ValueError(
-                f"Uncertainty Wizard was unable to disable gpu use."
-            ) from e
 
     @classmethod
     def _acquire_lock(cls) -> int:
@@ -447,9 +435,9 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
                 return os.open(
                     cls._lock_file_path(),
                     (
-                        os.O_CREAT  # create file if it does not exist
-                        | os.O_EXCL  # error if create and file exists
-                        | os.O_RDWR
+                            os.O_CREAT  # create file if it does not exist
+                            | os.O_EXCL  # error if create and file exists
+                            | os.O_RDWR
                     ),  # open for reading and writing
                 )
             except OSError as e:
@@ -473,3 +461,31 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
     def _release_lock(cls, lockfile: int):
         os.close(lockfile)
         os.remove(cls._lock_file_path())
+
+
+class CpuOnlyContext(EnsembleContextManager):
+    """
+    Disables all GPU use, and runs all processes on the CPU
+
+    Note: Tensorflow will still see that cuda is installed,
+    but will not find any GPU devices and thus print a warning accordingly.
+    """
+
+    # docstr-coverage:inherited
+    def __enter__(self) -> "CpuOnlyContext":
+        self.disable_all_gpus()
+        return self
+
+    @staticmethod
+    def disable_all_gpus():
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        try:
+            # Disable all GPUS
+            tf.config.set_visible_devices([], "GPU")
+            visible_devices = tf.config.get_visible_devices()
+            for device in visible_devices:
+                assert device.device_type != "GPU"
+        except RuntimeError as e:
+            raise ValueError(
+                f"Uncertainty Wizard was unable to disable gpu use."
+            ) from e
