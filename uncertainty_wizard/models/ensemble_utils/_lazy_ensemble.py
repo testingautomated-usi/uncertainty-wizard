@@ -300,6 +300,9 @@ class LazyEnsemble(_UwizModel):
         """
         Runs a task for every model, but without actually loading or persisting any model
 
+        Hint: If you do not use the gpu for the passed task, consider passing
+        `context=uwiz.models.ensemble_utils.CpuOnlyContextManager`.
+
         :param task: The picklable function to be run for every model.
         :param num_processes: The number of processes to use.
             Default: The default or value specified when creating the lazy ensemble.
