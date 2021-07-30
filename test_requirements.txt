@@ -1,6 +1,6 @@
 jupyterlab==3.1.0
 coverage==5.5
-docstr-coverage==2.1.0
+docstr-coverage==2.1.1
 isort==5.9.1
 black==21.4b2
 flake8==3.9.1
