@@ -12,3 +12,7 @@ exclude_lines =
     raise AssertionError
     raise NotImplementedError
     pass
+
+omit =
+    # Test environment has no GPUs, so we cannot run GPU config on it
+    uncertainty_wizard/models/ensemble_utils/_lazy_contexts.py
