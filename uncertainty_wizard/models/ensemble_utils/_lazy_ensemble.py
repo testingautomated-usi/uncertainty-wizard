@@ -194,6 +194,7 @@ class LazyEnsemble(_UwizModel):
         create_function: Callable[[int], Tuple[tf.keras.Model, T]],
         num_processes: int = None,
         context: Callable[[int, dict], EnsembleContextManager] = None,
+        models: Optional[Iterable[int]] = None,
     ) -> List[T]:
         """
         This function takes care of the creation of new atomic models for this ensemble instance.
@@ -211,6 +212,8 @@ class LazyEnsemble(_UwizModel):
             Default: The default or value specified when creating the lazy ensemble.
         :param context: A contextmanager which prepares a newly crated process for execution
             (e.g. by configuring the gpus). See class docstring for explanation of default values.
+        :param models: The ids of the atomic models to be created.
+            If `None` (default), all models will be created.
         :return: The reports returned by the create_function executions.
         """
         return self._run_in_processes(
@@ -218,6 +221,7 @@ class LazyEnsemble(_UwizModel):
             inner_function=create_function,
             num_processes=num_processes,
             context=context,
+            models=models,
         )
 
     def modify(
@@ -225,6 +229,7 @@ class LazyEnsemble(_UwizModel):
         map_function: Callable[[int, tf.keras.Model], Tuple[tf.keras.Model, T]],
         num_processes: int = None,
         context: Callable[[int], EnsembleContextManager] = None,
+        models: Iterable[int] = None,
     ) -> List[T]:
         """
         This function takes care of modifications of previously generated atomic models for this ensemble instance.
@@ -247,6 +252,8 @@ class LazyEnsemble(_UwizModel):
             Default: The default or value specified when creating the lazy ensemble.
         :param context: A contextmanager which prepares a newly crated process for execution
             (e.g. by configuring the gpus). See class docstring for explanation of default values.
+        :param models: The ids of the atomic models to be modified.
+            If `None` (default), all models will be modified.
         :return: The reports returned by the create_function executions.
         """
         return self._run_in_processes(
@@ -254,6 +261,7 @@ class LazyEnsemble(_UwizModel):
             inner_function=map_function,
             num_processes=num_processes,
             context=context,
+            models=models,
         )
 
     def consume(
@@ -261,6 +269,7 @@ class LazyEnsemble(_UwizModel):
         consume_function: Callable[[int, tf.keras.Model], T],
         num_processes: int = None,
         context: Callable[[int], EnsembleContextManager] = None,
+        models: Iterable[int] = None,
     ) -> List[T]:
         """
         This function uses the atomic models in the ensemble without changing them.
@@ -282,6 +291,8 @@ class LazyEnsemble(_UwizModel):
             Default: The default or value specified when creating the lazy ensemble.
         :param context: A contextmanager which prepares a newly crated process for execution
             (e.g. by configuring the gpus). See class docstring for explanation of default values.
+        :param models: The ids of the atomic models to be consumed.
+            If `None` (default), all models will be consumed.
         :return: The reports returned by the create_function executions.
         """
         return self._run_in_processes(
@@ -289,6 +300,7 @@ class LazyEnsemble(_UwizModel):
             inner_function=consume_function,
             num_processes=num_processes,
             context=context,
+            models=models,
         )
 
     def run_model_free(
@@ -296,6 +308,7 @@ class LazyEnsemble(_UwizModel):
         task: Callable[[int], T],
         num_processes: int = None,
         context: Callable[[int], EnsembleContextManager] = None,
+        num_times: Optional[int] = None,
     ) -> List[T]:
         """
         Runs a task for every model, but without actually loading or persisting any model
@@ -308,6 +321,7 @@ class LazyEnsemble(_UwizModel):
             Default: The default or value specified when creating the lazy ensemble.
         :param context: A contextmanager which prepares a newly crated process for execution
             (e.g. by configuring the gpus). See class docstring for explanation of default values.
+        :param num_times: The number of times to run the task.
         :return: The reports returned by the create_function executions.
         """
         return self._run_in_processes(
@@ -315,6 +329,7 @@ class LazyEnsemble(_UwizModel):
             inner_function=task,
             num_processes=num_processes,
             context=context,
+            models=num_times if num_times is None else range(num_times),
         )
 
     def fit(
@@ -453,6 +468,7 @@ class LazyEnsemble(_UwizModel):
         as_confidence: Union[None, bool] = None,
         num_processes=None,
         context=None,
+        models: Optional[Iterable[int]] = None,
     ):
         """
         Utility function to make quantified predictions on numpy arrays.
@@ -469,6 +485,7 @@ class LazyEnsemble(_UwizModel):
             The default or value specified when creating the lazy ensemble.
         :param context: A contextmanager which prepares a newly crated process for execution
             (e.g. by configuring the gpus). See class docstring for explanation of default values.
+        :param models: A list of model indices to use for prediction. Default: `None`(All models).
         :return: A tuple (predictions, uncertainties_or_confidences) if a single quantifier was passed as string
             or instance, or a collection of such tuples if the passed quantifiers was an iterable.
         """
@@ -483,6 +500,7 @@ class LazyEnsemble(_UwizModel):
             as_confidence=as_confidence,
             num_processes=num_processes,
             context=context,
+            models=models,
         )
 
     def quantify_predictions(
@@ -492,6 +510,7 @@ class LazyEnsemble(_UwizModel):
         as_confidence: bool = None,
         num_processes: int = None,
         context: Callable[[int], EnsembleContextManager] = None,
+        models: Optional[Iterable[int]] = None,
     ):
         """
         A utility function to make predictions on all atomic models and then infer overall predictions and uncertainty
@@ -505,6 +524,7 @@ class LazyEnsemble(_UwizModel):
         :param as_confidence: If true, uncertainties are multiplied by (-1), if false, confidences are multiplied by (-1). Default: No transformations.
         :param num_processes: The number of processes to use. Default: The default or value specified when creating the lazy ensemble.
         :param context: A contextmanager which prepares a newly crated process for execution (e.g. by configuring the gpus). See class docstring for explanation of default values.
+        :param models: A list of model indices to use for prediction. Default: `None`(All models).
         :return: A tuple (predictions, uncertainties_or_confidences) if a single quantifier was passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
         """
         all_q, pp_q, sample_q, return_single_tuple = self._quantifiers_as_list(
@@ -518,6 +538,7 @@ class LazyEnsemble(_UwizModel):
             consume_function=consume_function,
             num_processes=num_processes,
             context=context,
+            models=models,
         )
 
         scores = None
@@ -545,7 +566,9 @@ class LazyEnsemble(_UwizModel):
         inner_function: Callable[[int, tf.keras.Model], Any],
         num_processes: Optional[int],
         context: Optional[Callable[[int], EnsembleContextManager]],
+        models: Optional[Iterable[int]] = None,
     ):
+        models = range(self.num_models) if models is None else models
         num_processes = self._num_processes_or_default(num_processes=num_processes)
         if num_processes > 0:
             if context is None:
@@ -565,7 +588,7 @@ class LazyEnsemble(_UwizModel):
                 inner_func=inner_function,
                 context=context,
             )
-            results = pool.map(partial_process_creator, range(self.num_models))
+            results = pool.map(partial_process_creator, models)
             pool.close()
             pool.join()
             context.after_end()
@@ -575,7 +598,8 @@ class LazyEnsemble(_UwizModel):
                 context = NoneContextManager
             res = []
             context.before_start()
-            for i in range(self.num_models):
+
+            for i in models:
                 print(
                     f"Working on model {i} (of {self.num_models}) in the main process"
                 )
