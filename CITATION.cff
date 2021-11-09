@@ -2,11 +2,8 @@
 # Visit https://bit.ly/cffinit to generate yours today!
 
 cff-version: 1.2.0
-title: >-
-  Uncertainty-wizard: Fast and user-friendly neural
-  network uncertainty quantification
-message: >-
-  Please cite this software using the metadata from 'preferred-citation'.
+
+message: "If you use this software, please cite it as below."
 type: software
 authors:
   - given-names: Michael
@@ -21,33 +18,40 @@ authors:
     orcid: 'https://orcid.org/0000-0003-3088-0339'
 identifiers:
   - type: doi
-    value: 10.1109/ICST49551.2021.00056
-    description: The published paper
-  - type: doi
     value: 10.5281/zenodo.5121368
     description: The software archived on zenodo
   - type: doi
     value: 10.5281/zenodo.4651517
     description: The talk given when presenting the software
-repository-code: >-
-  https://github.com/testingautomated-usi/uncertainty-wizard
-url: >-
-  https://github.com/testingautomated-usi/uncertainty-wizard
+  - type: doi
+    value: 10.1109/ICST49551.2021.00056
+    description: The published paper
+title: >-
+  Uncertainty-wizard: Fast and user-friendly neural
+  network uncertainty quantification
+doi: 10.5281/zenodo.1234
+date-released: 2020-12-18
+url: "https://github.com/testingautomated-usi/uncertainty-wizard"
 repository: 'https://zenodo.org/record/5121368'
 repository-artifact: 'https://pypi.org/project/uncertainty-wizard/'
 license: MIT
 preferred-citation:
-  authors:
-    - given-names: Michael
-      family-names: Weiss
-      email: michael.weiss@usi.ch
-      affiliation: Università della Svizzera italiana
-      orcid: 'https://orcid.org/0000-0002-8944-389X'
-    - given-names: Paolo
-      family-names: Tonella
-      email: paolo.tonella@usi.ch
-      affiliation: Università della Svizzera italiana
-      orcid: 'https://orcid.org/0000-0003-3088-0339'
-  title: "Uncertainty-Wizard: Fast and User-Friendly Neural Network Uncertainty Quantification"
   type: article
+  authors:
+  - given-names: Michael
+    family-names: Weiss
+    email: michael.weiss@usi.ch
+    affiliation: Università della Svizzera italiana
+    orcid: 'https://orcid.org/0000-0002-8944-389X'
+  - given-names: Paolo
+    family-names: Tonella
+    email: paolo.tonella@usi.ch
+    affiliation: Università della Svizzera italiana
+    orcid: 'https://orcid.org/0000-0003-3088-0339'
+  doi: "10.1109/ICST49551.2021.00056"
+  journal: "2021 14th IEEE Conference on Software Testing, Verification and Validation (ICST)"
+  month: 4
+  start: 436 # First page number
+  end: 441 # Last page number
+  title: "Uncertainty-Wizard: Fast and User-Friendly Neural Network Uncertainty Quantification"
   year: 2021
