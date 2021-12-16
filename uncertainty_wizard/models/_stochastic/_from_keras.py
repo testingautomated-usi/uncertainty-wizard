@@ -24,6 +24,11 @@ def stochastic_from_keras(
     If no stochastic layers are present, a ValueError is thrown.
     The raising of the error can be suppressed by setting `expect_determinism` to true.
 
+    If your model contains custom layers, you can pass a function to `clone_function` to clone your custom layers,
+    or place the annotation `@tf.keras.utils.register_keras_serializable()` on your custom layers,
+    and make sure the `get_config` and `from_config` methods are implemented.
+    (uncertainty wizard will serialize and deserialize all layers).
+
     :param model: The model to copy. Remains unchanged.
     :param input_tensors: Optional tensors to use as input_tensors for new model. See the corresponding parameter in `tf.keras.models.clone_model` for details.
     :param _clone_function: Optional function to use to clone layers. Will be applied to all layers except input layers and stochastic layers. See the corresponding parameter in `tf.keras.models.clone_model` for more details.
