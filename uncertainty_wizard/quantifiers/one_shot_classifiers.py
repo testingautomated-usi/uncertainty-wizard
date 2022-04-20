@@ -144,7 +144,7 @@ class SoftmaxEntropy(UncertaintyQuantifier):
         return calculated_predictions, entropies
 
 
-class DeepGini(uwiz.quantifiers.Quantifier):
+class DeepGini(UncertaintyQuantifier):
     """DeepGini - Uncertainty (1 minus sum of squared softmax outputs).
 
 
