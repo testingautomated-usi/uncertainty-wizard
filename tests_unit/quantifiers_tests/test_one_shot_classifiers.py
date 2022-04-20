@@ -18,11 +18,11 @@ class TestDeepGini(TestCase):
         self.assertTrue(isinstance(QuantifierRegistry.find("deep_gini"), DeepGini))
 
     def test_is_confidence(self):
-        self.assertFalse(PredictionConfidenceScore.is_confidence())
-        self.assertFalse(PredictionConfidenceScore().is_confidence())
+        self.assertFalse(DeepGini.is_confidence())
+        self.assertFalse(DeepGini().is_confidence())
 
     def test_samples_type_declaration(self):
-        self.assertFalse(PredictionConfidenceScore.takes_samples())
+        self.assertFalse(DeepGini.takes_samples())
 
     def test_problem_type(self):
         self.assertEqual(DeepGini.problem_type(), ProblemType.CLASSIFICATION)
