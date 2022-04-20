@@ -3,6 +3,7 @@ from typing import List
 import numpy as np
 
 import uncertainty_wizard as uwiz
+
 from .quantifier import ConfidenceQuantifier, ProblemType, UncertaintyQuantifier
 
 
