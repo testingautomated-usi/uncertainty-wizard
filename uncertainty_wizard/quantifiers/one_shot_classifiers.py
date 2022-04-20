@@ -174,11 +174,11 @@ class DeepGini(UncertaintyQuantifier):
     # docstr-coverage:inherited
     @classmethod
     def calculate(cls, nn_outputs: np.ndarray):
-        predictions, _ = uwiz.quantifiers.MaxSoftmax.calculate(nn_outputs)
+        predictions, _ = MaxSoftmax.calculate(nn_outputs)
         gini = 1 - np.sum(nn_outputs * nn_outputs, axis=1)
         return predictions, gini
 
     # docstr-coverage:inherited
     @classmethod
-    def problem_type(cls) -> uwiz.ProblemType:
+    def problem_type(cls) -> ProblemType:
         return ProblemType.CLASSIFICATION
