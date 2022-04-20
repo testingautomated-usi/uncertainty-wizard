@@ -1,6 +1,11 @@
 from .mean_softmax import MeanSoftmax
 from .mutual_information import MutualInformation
-from .one_shot_classifiers import MaxSoftmax, PredictionConfidenceScore, SoftmaxEntropy
+from .one_shot_classifiers import (
+    DeepGini,
+    MaxSoftmax,
+    PredictionConfidenceScore,
+    SoftmaxEntropy,
+)
 from .predictive_entropy import PredictiveEntropy
 from .quantifier import Quantifier
 from .regression_quantifiers import StandardDeviation
@@ -51,6 +56,7 @@ class QuantifierRegistry:
 QuantifierRegistry.register(MaxSoftmax())
 QuantifierRegistry.register(PredictionConfidenceScore())
 QuantifierRegistry.register(SoftmaxEntropy())
+QuantifierRegistry.register(DeepGini())
 QuantifierRegistry.register(VariationRatio())
 QuantifierRegistry.register(PredictiveEntropy())
 QuantifierRegistry.register(MutualInformation())
