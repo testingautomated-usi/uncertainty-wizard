@@ -8,7 +8,52 @@ from uncertainty_wizard.quantifiers import (
     QuantifierRegistry,
     SoftmaxEntropy,
 )
+from uncertainty_wizard.quantifiers.one_shot_classifiers import DeepGini
 from uncertainty_wizard.quantifiers.quantifier import ProblemType
+
+
+class TestDeepGini(TestCase):
+
+    def test_string_representation(self):
+        self.assertTrue(
+            isinstance(QuantifierRegistry.find("DeepGini"), DeepGini)
+        )
+        self.assertTrue(
+            isinstance(QuantifierRegistry.find("deep_gini"), DeepGini)
+        )
+
+    def test_is_confidence(self):
+        self.assertFalse(PredictionConfidenceScore.is_confidence())
+        self.assertFalse(PredictionConfidenceScore().is_confidence())
+
+    def test_samples_type_declaration(self):
+        self.assertFalse(PredictionConfidenceScore.takes_samples())
+
+    def test_problem_type(self):
+        self.assertEqual(
+            DeepGini.problem_type(), ProblemType.CLASSIFICATION
+        )
+
+    def test_quantification(self):
+        input_batch = np.array([
+            [.1, .2, .3, .4],
+            [.5, .1, .1, .3],
+            [.25, .25, .25, .25],
+            [1.0, 0, 0, 0],
+            [0, 1.0, 0, 0],
+        ])
+
+        expected = np.array([
+            0.7,  # https://bit.ly/301vmQ3
+            0.64,  # https://bit.ly/3qkHuGm
+            0.75,  # https://bit.ly/3wrPI0h
+            0,  # Trivial
+            0  # Re-Ordering of previous
+        ])
+
+        pred, unc = DeepGini.calculate(input_batch)
+        assert np.all(pred == np.array([3, 0, 0, 0, 1]))
+        assert np.all(unc == expected)
 
 
 class TestPCS(TestCase):

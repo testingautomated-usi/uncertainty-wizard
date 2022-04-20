@@ -3,7 +3,6 @@ from typing import List
 import numpy as np
 
 import uncertainty_wizard as uwiz
-
 from .quantifier import ConfidenceQuantifier, ProblemType, UncertaintyQuantifier
 
 
@@ -142,3 +141,38 @@ class SoftmaxEntropy(UncertaintyQuantifier):
         entropies = uwiz.quantifiers.predictive_entropy.entropy(nn_outputs, axis=1)
 
         return calculated_predictions, entropies
+
+
+class DeepGini(uwiz.quantifiers.Quantifier):
+    """DeepGini - Uncertainty (1 minus sum of squared softmax outputs).
+
+
+     See Feng. et. al., "Deepgini: prioritizing massive tests to enhance
+     the robustness of deep neural networks" for more information. ISSTA 2020."""
+
+    # docstr-coverage:inherited
+    @classmethod
+    def aliases(cls) -> List[str]:
+        return ["deep_gini", "DeepGini"]
+
+    # docstr-coverage:inherited
+    @classmethod
+    def takes_samples(cls) -> bool:
+        return False
+
+    # docstr-coverage:inherited
+    @classmethod
+    def is_confidence(cls) -> bool:
+        return False
+
+    # docstr-coverage:inherited
+    @classmethod
+    def calculate(cls, nn_outputs: np.ndarray):
+        predictions, _ = uwiz.quantifiers.MaxSoftmax.calculate(nn_outputs)
+        gini = 1 - np.sum(nn_outputs * nn_outputs, axis=1)
+        return predictions, gini
+
+    # docstr-coverage:inherited
+    @classmethod
+    def problem_type(cls) -> uwiz.ProblemType:
+        return uwiz.ProblemType.CLASSIFICATION
