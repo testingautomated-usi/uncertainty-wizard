@@ -3,7 +3,6 @@ from typing import List
 import numpy as np
 
 import uncertainty_wizard as uwiz
-
 from .quantifier import ConfidenceQuantifier, ProblemType, UncertaintyQuantifier
 
 
@@ -149,7 +148,12 @@ class DeepGini(UncertaintyQuantifier):
 
 
     See Feng. et. al., "Deepgini: prioritizing massive tests to enhance
-    the robustness of deep neural networks" for more information. ISSTA 2020."""
+    the robustness of deep neural networks" for more information. ISSTA 2020.
+
+    The implementation is part of our paper:
+    Michael Weiss and Paolo Tonella, Simple Techniques Work Surprisingly Well
+    for Neural Network Test Prioritization and Active Learning (Replication Paper),
+    ISSTA 2021. (forthcoming)"""
 
     # docstr-coverage:inherited
     @classmethod
