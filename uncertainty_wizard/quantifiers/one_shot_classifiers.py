@@ -147,8 +147,8 @@ class DeepGini(uwiz.quantifiers.Quantifier):
     """DeepGini - Uncertainty (1 minus sum of squared softmax outputs).
 
 
-     See Feng. et. al., "Deepgini: prioritizing massive tests to enhance
-     the robustness of deep neural networks" for more information. ISSTA 2020."""
+    See Feng. et. al., "Deepgini: prioritizing massive tests to enhance
+    the robustness of deep neural networks" for more information. ISSTA 2020."""
 
     # docstr-coverage:inherited
     @classmethod
