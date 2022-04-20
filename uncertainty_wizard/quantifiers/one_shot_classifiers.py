@@ -181,4 +181,4 @@ class DeepGini(UncertaintyQuantifier):
     # docstr-coverage:inherited
     @classmethod
     def problem_type(cls) -> uwiz.ProblemType:
-        return uwiz.ProblemType.CLASSIFICATION
+        return ProblemType.CLASSIFICATION
