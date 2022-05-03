@@ -1,4 +1,4 @@
-VERSION = "0.2"
+VERSION = "0.3.0"
 # RELEASE = VERSION + "-alpha2"
 # RELEASE = VERSION + "-beta1"
 # RELEASE = VERSION + "-rc1"
