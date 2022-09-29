@@ -1,5 +1,6 @@
+import logging
+
 import tensorflow as tf
-from tensorflow.python.platform import tf_logging as logging
 
 from uncertainty_wizard.models._stochastic._abstract_stochastic import Stochastic
 from uncertainty_wizard.models._stochastic._stochastic_mode import StochasticMode

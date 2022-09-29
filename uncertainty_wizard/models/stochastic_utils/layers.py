@@ -5,7 +5,6 @@ which are modified in a way to take the stochastic mode into account.
 import warnings
 
 import tensorflow as tf
-from tensorflow.python.keras.layers import GaussianNoise
 
 from uncertainty_wizard.internal_utils import UncertaintyWizardWarning
 from uncertainty_wizard.models._stochastic._stochastic_mode import StochasticMode
@@ -215,7 +214,7 @@ class UwizGaussianNoise(tf.keras.layers.GaussianNoise):
 
     # docstr-coverage:inherited
     def get_config(self):
-        config = super(GaussianNoise, self).get_config()
+        config = super(tf.keras.layers.GaussianNoise, self).get_config()
         config["name"] = "UwGaussianNoise"
         # No custom config yet.
         return config
