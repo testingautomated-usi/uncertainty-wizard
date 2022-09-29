@@ -5,7 +5,6 @@ which are modified in a way to take the stochastic mode into account.
 import warnings
 
 import tensorflow as tf
-from tensorflow.python.keras.layers import GaussianNoise
 
 from uncertainty_wizard.internal_utils import UncertaintyWizardWarning
 from uncertainty_wizard.models._stochastic._stochastic_mode import StochasticMode
@@ -17,7 +16,7 @@ _MISSING_STOCHASTIC_MODE_ERROR = (
 
 
 def _has_casting_preventing_subtype(
-    instance, expected_type, corresponding_uw_type
+        instance, expected_type, corresponding_uw_type
 ) -> bool:
     i_type = type(instance)
     if issubclass(i_type, expected_type) and not issubclass(expected_type, i_type):
@@ -50,12 +49,12 @@ class UwizBernoulliDropout(tf.keras.layers.Dropout):
     """
 
     def __init__(
-        self,
-        rate,
-        stochastic_mode: StochasticMode,
-        noise_shape=None,
-        seed=None,
-        **kwargs,
+            self,
+            rate,
+            stochastic_mode: StochasticMode,
+            noise_shape=None,
+            seed=None,
+            **kwargs,
     ):
         """
         Create a new layer instance. This is essentially the same as creating a tf.keras.layers.Dropout layer,
@@ -82,7 +81,7 @@ class UwizBernoulliDropout(tf.keras.layers.Dropout):
 
     @classmethod
     def from_keras_layer(
-        cls, layer: tf.keras.layers.Dropout, stochastic_mode: StochasticMode
+            cls, layer: tf.keras.layers.Dropout, stochastic_mode: StochasticMode
     ):
         """
         Attempts to create a new UwizBernoulliDropout instance based on the configuration (i.e. dropout rate)
@@ -92,7 +91,7 @@ class UwizBernoulliDropout(tf.keras.layers.Dropout):
         :return: A UwizBernoulliDropout, if casting was successful. Otherwise (i.e., if the passed layer was a casting preventing subtype of Dropout), the passed layer is returned and a warning is printed to the console.
         """
         if _has_casting_preventing_subtype(
-            layer, tf.keras.layers.Dropout, UwizBernoulliDropout
+                layer, tf.keras.layers.Dropout, UwizBernoulliDropout
         ):
             return layer
         else:
@@ -142,7 +141,7 @@ class UwizGaussianDropout(tf.keras.layers.GaussianDropout):
 
     @classmethod
     def from_keras_layer(
-        cls, layer: tf.keras.layers.GaussianDropout, stochastic_mode: StochasticMode
+            cls, layer: tf.keras.layers.GaussianDropout, stochastic_mode: StochasticMode
     ):
         """
         Attempts to create a new UwizGaussianDropout instance based on the configuration (i.e. dropout rate)
@@ -152,7 +151,7 @@ class UwizGaussianDropout(tf.keras.layers.GaussianDropout):
         :return: A UwizGaussianDropout, if casting was successful. Otherwise (i.e., if the passed layer was a casting preventing subtype of GaussianDropout), the passed layer is returned and a warning is printed to the console.
         """
         if _has_casting_preventing_subtype(
-            layer, tf.keras.layers.GaussianDropout, UwizGaussianDropout
+                layer, tf.keras.layers.GaussianDropout, UwizGaussianDropout
         ):
             return layer
         else:
@@ -196,7 +195,7 @@ class UwizGaussianNoise(tf.keras.layers.GaussianNoise):
 
     @classmethod
     def from_keras_layer(
-        cls, layer: tf.keras.layers.GaussianNoise, stochastic_mode: StochasticMode
+            cls, layer: tf.keras.layers.GaussianNoise, stochastic_mode: StochasticMode
     ):
         """
         Attempts to create a new UwizGaussianNoise instance based on the configuration (i.e. the standard deviation)
@@ -206,7 +205,7 @@ class UwizGaussianNoise(tf.keras.layers.GaussianNoise):
         :return: A UwizGaussianNoise, if casting was successful. Otherwise (i.e., if the passed layer was a casting preventing subtype of GaussianNoise), the passed layer is returned and a warning is printed to the console.
         """
         if _has_casting_preventing_subtype(
-            layer, tf.keras.layers.GaussianNoise, UwizGaussianNoise
+                layer, tf.keras.layers.GaussianNoise, UwizGaussianNoise
         ):
             return layer
         else:
@@ -215,7 +214,7 @@ class UwizGaussianNoise(tf.keras.layers.GaussianNoise):
 
     # docstr-coverage:inherited
     def get_config(self):
-        config = super(GaussianNoise, self).get_config()
+        config = super(tf.keras.layers.GaussianNoise, self).get_config()
         config["name"] = "UwGaussianNoise"
         # No custom config yet.
         return config
