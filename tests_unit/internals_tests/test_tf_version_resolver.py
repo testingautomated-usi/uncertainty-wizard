@@ -66,7 +66,7 @@ class EnsembleFunctionalTest(TestCase):
         self.call_current_tf_is_newer_than("2.0.0", True)
 
         # Test release candidate
-        self.call_current_tf_is_newer_than("1.2.3_rc2", True)
+        self.call_current_tf_is_newer_than("1.2.3rc2", True)
 
     def test_current_tf_version_is_newer_is_false(self):
         # Call on same version
