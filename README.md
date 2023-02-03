@@ -41,10 +41,10 @@ Uncertainty wizard is a plugin on top of `tensorflow.keras`,
 It's as easy as `pip install uncertainty-wizard`
 
 #### Requirements
-- tensorflow >= 2.3.0
-- python 3.6* / 3.7 / 3.8 
+`uncertainty-wizard` is tested on python 3.8 and a recent tensorflow versions. Earlier versions (python 3.6+ and tensorflow 2.3+) should mostly work as well, but may require some mild tweaks.
 
-*python 3.6 requires to `pip install dataclasses`
+Note: There's currently a known issue regarding multi-gpu usage and tensorflow>=2.10. For using Multi-Device GPU config, please
+fall back to `tensorflow==2.9.0` and stay tuned for changes in issue [#75](https://github.com/testingautomated-usi/uncertainty-wizard/issues/75).
 
 #### Documentation
 Our documentation is deployed to
