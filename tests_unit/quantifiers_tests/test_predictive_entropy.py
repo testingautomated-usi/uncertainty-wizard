@@ -19,6 +19,10 @@ class TestPredictiveEntropy(TestCase):
         self.assertTrue(
             isinstance(QuantifierRegistry.find("pred_entropy"), PredictiveEntropy)
         )
+        self.assertTrue(isinstance(QuantifierRegistry.find("PE"), PredictiveEntropy))
+        self.assertTrue(
+            isinstance(QuantifierRegistry.find("PredictiveEntropy"), PredictiveEntropy)
+        )
 
     def test_is_confidence(self):
         self.assertFalse(PredictiveEntropy.is_confidence())

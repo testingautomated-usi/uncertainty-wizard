@@ -18,6 +18,9 @@ class TestStandardDeviation(TestCase):
         )
         self.assertTrue(isinstance(QuantifierRegistry.find("std"), StandardDeviation))
         self.assertTrue(
+            isinstance(QuantifierRegistry.find("StandardDeviation"), StandardDeviation)
+        )
+        self.assertTrue(
             isinstance(QuantifierRegistry.find("stddev"), StandardDeviation)
         )
 

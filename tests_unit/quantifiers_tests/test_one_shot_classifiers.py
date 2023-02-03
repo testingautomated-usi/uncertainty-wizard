@@ -65,6 +65,12 @@ class TestPCS(TestCase):
         )
         self.assertTrue(
             isinstance(
+                QuantifierRegistry.find("PredictionConfidenceScore"),
+                PredictionConfidenceScore,
+            )
+        )
+        self.assertTrue(
+            isinstance(
                 QuantifierRegistry.find("prediction_confidence_score"),
                 PredictionConfidenceScore,
             )
@@ -140,6 +146,7 @@ class TestSoftmax(TestCase):
     def test_string_representation(self):
         self.assertTrue(isinstance(QuantifierRegistry.find("softmax"), MaxSoftmax))
         self.assertTrue(isinstance(QuantifierRegistry.find("max_softmax"), MaxSoftmax))
+        self.assertTrue(isinstance(QuantifierRegistry.find("MaxSoftmax"), MaxSoftmax))
 
     def test_is_confidence(self):
         self.assertTrue(MaxSoftmax.is_confidence())
@@ -213,6 +220,7 @@ class TestSoftmaxEntropy(TestCase):
         self.assertTrue(
             isinstance(QuantifierRegistry.find("SoftmaxEntropy"), SoftmaxEntropy)
         )
+        self.assertTrue(isinstance(QuantifierRegistry.find("SE"), SoftmaxEntropy))
 
     def test_is_confidence(self):
         self.assertFalse(SoftmaxEntropy.is_confidence())

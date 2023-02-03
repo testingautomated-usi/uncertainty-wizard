@@ -17,6 +17,8 @@ class TestMeanSoftmax(TestCase):
             isinstance(QuantifierRegistry.find("mean_softmax"), MeanSoftmax)
         )
         self.assertTrue(isinstance(QuantifierRegistry.find("ensembling"), MeanSoftmax))
+        self.assertTrue(isinstance(QuantifierRegistry.find("MS"), MeanSoftmax))
+        self.assertTrue(isinstance(QuantifierRegistry.find("MeanSoftmax"), MeanSoftmax))
 
     def test_is_confidence(self):
         self.assertTrue(MeanSoftmax.is_confidence())

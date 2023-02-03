@@ -30,7 +30,7 @@ class VariationRatio(UncertaintyQuantifier):
     # docstr-coverage:inherited
     @classmethod
     def aliases(cls) -> List[str]:
-        return ["variation_ratio", "vr", "var_ratio"]
+        return ["variation_ratio", "vr", "var_ratio", "VariationRatio"]
 
     # docstr-coverage:inherited
     @classmethod
