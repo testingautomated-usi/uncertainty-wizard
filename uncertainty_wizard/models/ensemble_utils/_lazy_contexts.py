@@ -7,7 +7,9 @@ from typing import Dict
 
 import tensorflow as tf
 
-from uncertainty_wizard.internal_utils.tf_version_resolver import current_tf_version_is_older_than
+from uncertainty_wizard.internal_utils.tf_version_resolver import (
+    current_tf_version_is_older_than,
+)
 from uncertainty_wizard.models.ensemble_utils._save_config import SaveConfig
 
 global number_of_tasks_in_this_process
@@ -106,7 +108,7 @@ class EnsembleContextManager(abc.ABC):
     # Inspection disabled as overriding child classes may want to use 'self'
     # noinspection PyMethodMayBeStatic
     def save_single_model(
-            self, model_id: int, model: tf.keras.Model, save_config: SaveConfig
+        self, model_id: int, model: tf.keras.Model, save_config: SaveConfig
     ) -> None:
         """
         This method will be called to store a single atomic model in the ensemble.
@@ -122,7 +124,7 @@ class EnsembleContextManager(abc.ABC):
     # Inspection disabled as overriding child classes may want to use 'self'
     # noinspection PyMethodMayBeStatic
     def load_single_model(
-            self, model_id: int, save_config: SaveConfig
+        self, model_id: int, save_config: SaveConfig
     ) -> tf.keras.Model:
         """
         This method will be called to load a single atomic model in the ensemble.
@@ -229,9 +231,11 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
     def __init__(self):
         super().__init__()
         if not current_tf_version_is_older_than("2.10.0"):
-            raise RuntimeError("The DeviceAllocatorContextManager is not compatible with tensorflow 2.10.0 "
-                               "or newer. Please fall back to a single GPU for now (see issue #75),"
-                               "or downgrade to tensorflow 2.9.0.")
+            raise RuntimeError(
+                "The DeviceAllocatorContextManager is not compatible with tensorflow 2.10.0 "
+                "or newer. Please fall back to a single GPU for now (see issue #75),"
+                "or downgrade to tensorflow 2.9.0."
+            )
 
     # docstr-coverage: inherited
     def __enter__(self) -> "DeviceAllocatorContextManager":
@@ -471,9 +475,9 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
                 return os.open(
                     cls._lock_file_path(),
                     (
-                            os.O_CREAT  # create file if it does not exist
-                            | os.O_EXCL  # error if create and file exists
-                            | os.O_RDWR
+                        os.O_CREAT  # create file if it does not exist
+                        | os.O_EXCL  # error if create and file exists
+                        | os.O_RDWR
                     ),  # open for reading and writing
                 )
             except OSError as e:
