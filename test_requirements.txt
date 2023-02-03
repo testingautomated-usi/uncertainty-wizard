@@ -1,4 +1,4 @@
-jupyterlab==3.1.4
+jupyterlab==3.6.1
 coverage==6.0.2
 docstr-coverage==2.2.0
 isort==5.10.1
