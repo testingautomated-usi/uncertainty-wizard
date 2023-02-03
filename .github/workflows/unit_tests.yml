@@ -30,6 +30,11 @@ jobs:
           pip install tensorflow==${{ matrix.tf-version }}
           pip install -r test_requirements.txt
 
+      # Lazy fix for fact that some py/tf combinations don't like new versions of protobuf
+      - name: Downgrade protobuf
+        run: |  
+          pip install protobuf==3.20.0 
+
       - name: Run Tests
         run: |
           bash scripts/run_coverage.sh
