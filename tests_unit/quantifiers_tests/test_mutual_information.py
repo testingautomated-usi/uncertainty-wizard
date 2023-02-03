@@ -19,9 +19,7 @@ class TestMutualInformation(TestCase):
         self.assertTrue(
             isinstance(QuantifierRegistry.find("mutu_info"), MutualInformation)
         )
-        self.assertTrue(
-            isinstance(QuantifierRegistry.find("MI"), MutualInformation)
-        )
+        self.assertTrue(isinstance(QuantifierRegistry.find("MI"), MutualInformation))
         self.assertTrue(
             isinstance(QuantifierRegistry.find("MutualInformation"), MutualInformation)
         )

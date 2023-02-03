@@ -64,7 +64,10 @@ class TestPCS(TestCase):
             isinstance(QuantifierRegistry.find("PCS"), PredictionConfidenceScore)
         )
         self.assertTrue(
-            isinstance(QuantifierRegistry.find("PredictionConfidenceScore"), PredictionConfidenceScore)
+            isinstance(
+                QuantifierRegistry.find("PredictionConfidenceScore"),
+                PredictionConfidenceScore,
+            )
         )
         self.assertTrue(
             isinstance(
@@ -217,9 +220,7 @@ class TestSoftmaxEntropy(TestCase):
         self.assertTrue(
             isinstance(QuantifierRegistry.find("SoftmaxEntropy"), SoftmaxEntropy)
         )
-        self.assertTrue(
-            isinstance(QuantifierRegistry.find("SE"), SoftmaxEntropy)
-        )
+        self.assertTrue(isinstance(QuantifierRegistry.find("SE"), SoftmaxEntropy))
 
     def test_is_confidence(self):
         self.assertFalse(SoftmaxEntropy.is_confidence())
