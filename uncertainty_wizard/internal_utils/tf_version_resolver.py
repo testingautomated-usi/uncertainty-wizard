@@ -15,14 +15,15 @@ def _compare_expected_to_current_tf_version(expected_version) -> Union[None, int
     """
     actual_version = tf.version.VERSION
 
-    # Note: We're currently only considering versions in the format 'x.y.z'
-    # (i.e., ignore RCs and multi digit versions - which is probably fine given tfs very fast major release cycles)
+    # replaces rc, dev and b with dots to make the version strings comparable
+    dotted_actual_version = actual_version.replace("rc", ".-1.")
+    dotted_expected_version = expected_version.replace("rc", ".-1.")
 
     # Inspection disabling reason: We really want to catch all exceptions.
     # noinspection PyBroadException
     try:
-        expected_v_splits = [int(v) for v in expected_version[:5].split(".")]
-        actual_v_splits = [int(v) for v in actual_version[:5].split(".")]
+        expected_v_splits = [int(v) for v in dotted_expected_version.split(".")]
+        actual_v_splits = [int(v) for v in dotted_actual_version.split(".")]
     except Exception:
         warnings.warn(
             f"One of the version strings '{expected_version}' (requested) "
@@ -34,6 +35,11 @@ def _compare_expected_to_current_tf_version(expected_version) -> Union[None, int
             RuntimeWarning,
         )
         return None
+
+    if len(expected_v_splits) > len(actual_v_splits):
+        actual_v_splits += [1000] * (len(expected_v_splits) - len(actual_v_splits))
+    elif len(expected_v_splits) < len(actual_v_splits):
+        expected_v_splits += [1000] * (len(actual_v_splits) - len(expected_v_splits))
 
     for act, expected in zip(actual_v_splits, expected_v_splits):
         if expected > act:

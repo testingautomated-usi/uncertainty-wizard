@@ -1,7 +1,12 @@
 import inspect
+import unittest
 from unittest import TestCase
 
 import tensorflow as tf
+
+from uncertainty_wizard.internal_utils.tf_version_resolver import (
+    current_tf_version_is_older_than,
+)
 
 
 class TestExperimentalAPIAreAvailable(TestCase):
@@ -21,6 +26,9 @@ class TestExperimentalAPIAreAvailable(TestCase):
         self.assertTrue("device_type" in parameters)
         self.assertEqual(1, len(parameters))
 
+    @unittest.skipIf(
+        not current_tf_version_is_older_than("2.10.0"), "Known to fail for tf >= 2.10.0"
+    )
     def test_virtual_device_configuration(self):
         self.assertTrue("VirtualDeviceConfiguration" in dir(tf.config.experimental))
         parameters = inspect.signature(

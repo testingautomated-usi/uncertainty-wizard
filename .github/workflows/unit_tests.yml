@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
-        tf-version: [2.3.0, 2.4.0, 2.5.0]
+        python-version: [3.8]
+        tf-version: [2.7.0, 2.8.0, 2.9.0, 2.10.0, 2.11.0]
 
     steps:
       - uses: actions/checkout@v2
@@ -29,6 +29,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install tensorflow==${{ matrix.tf-version }}
           pip install -r test_requirements.txt
+
+      # Lazy fix for fact that some py/tf combinations don't like new versions of protobuf
+      - name: Downgrade protobuf
+        run: |  
+          pip install protobuf==3.20.0 
 
       - name: Run Tests
         run: |

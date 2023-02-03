@@ -19,7 +19,7 @@ class EnsembleFunctionalTest(TestCase):
         self.call_current_tf_is_older_than("2.0.0", False)
 
         # Test release candidate
-        self.call_current_tf_is_older_than("1.2.3_rc2", False)
+        self.call_current_tf_is_older_than("1.2.3rc2", False)
 
         # Call on same version
         self.call_current_tf_is_older_than(tf.__version__, False)
@@ -27,10 +27,10 @@ class EnsembleFunctionalTest(TestCase):
     def test_current_tf_version_is_older_than_is_true(self):
         # Test regular case
         self.call_current_tf_is_older_than("3.2.1", True)
-        self.call_current_tf_is_older_than("2.9.0", True)
+        self.call_current_tf_is_older_than("2.36.0", True)
 
         # Test release candidate
-        self.call_current_tf_is_older_than("3.2.1_rc1", True)
+        self.call_current_tf_is_older_than("3.2.1rc1", True)
 
     def test_tf_version_is_older_than_fallback(self):
         invalid = "1.2.invalid"
@@ -66,7 +66,7 @@ class EnsembleFunctionalTest(TestCase):
         self.call_current_tf_is_newer_than("2.0.0", True)
 
         # Test release candidate
-        self.call_current_tf_is_newer_than("1.2.3_rc2", True)
+        self.call_current_tf_is_newer_than("1.2.3rc2", True)
 
     def test_current_tf_version_is_newer_is_false(self):
         # Call on same version
