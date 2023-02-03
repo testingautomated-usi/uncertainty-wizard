@@ -44,7 +44,7 @@ class PredictiveEntropy(UncertaintyQuantifier):
     # docstr-coverage:inherited
     @classmethod
     def aliases(cls) -> List[str]:
-        return ["predictive_entropy", "pred_entropy", "PE"]
+        return ["predictive_entropy", "pred_entropy", "PE", "PredictiveEntropy"]
 
     # docstr-coverage:inherited
     @classmethod

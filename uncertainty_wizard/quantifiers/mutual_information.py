@@ -30,7 +30,7 @@ class MutualInformation(UncertaintyQuantifier):
     # docstr-coverage:inherited
     @classmethod
     def aliases(cls) -> List[str]:
-        return ["mutu_info", "mutual_information", "mi"]
+        return ["mutu_info", "mutual_information", "mi", "MutualInformation"]
 
     # docstr-coverage:inherited
     @classmethod

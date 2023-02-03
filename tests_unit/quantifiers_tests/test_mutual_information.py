@@ -19,6 +19,12 @@ class TestMutualInformation(TestCase):
         self.assertTrue(
             isinstance(QuantifierRegistry.find("mutu_info"), MutualInformation)
         )
+        self.assertTrue(
+            isinstance(QuantifierRegistry.find("MI"), MutualInformation)
+        )
+        self.assertTrue(
+            isinstance(QuantifierRegistry.find("MutualInformation"), MutualInformation)
+        )
 
     def test_is_confidence(self):
         self.assertFalse(MutualInformation.is_confidence())

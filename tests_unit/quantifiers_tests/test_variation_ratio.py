@@ -20,6 +20,7 @@ class TestVariationRatio(TestCase):
             isinstance(QuantifierRegistry.find("var_ratio"), VariationRatio)
         )
         self.assertTrue(isinstance(QuantifierRegistry.find("VR"), VariationRatio))
+        self.assertTrue(isinstance(QuantifierRegistry.find("VariationRatio"), VariationRatio))
 
     def test_is_confidence(self):
         self.assertFalse(VariationRatio.is_confidence())

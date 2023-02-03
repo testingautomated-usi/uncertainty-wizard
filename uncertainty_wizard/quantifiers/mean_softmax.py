@@ -17,7 +17,7 @@ class MeanSoftmax(ConfidenceQuantifier):
     # docstr-coverage:inherited
     @classmethod
     def aliases(cls) -> List[str]:
-        return ["mean_softmax", "ensembling", "ms"]
+        return ["mean_softmax", "ensembling", "ms", "MeanSoftmax"]
 
     # docstr-coverage:inherited
     @classmethod
