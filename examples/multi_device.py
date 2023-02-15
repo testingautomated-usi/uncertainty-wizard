@@ -11,6 +11,10 @@ import uncertainty_wizard as uwiz
 
 class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManager):
 
+    #
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__()
+
     @classmethod
     def file_path(cls) -> str:
         return "temp-ensemble.txt"

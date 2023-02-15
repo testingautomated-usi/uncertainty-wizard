@@ -228,8 +228,8 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
     the abstract methods.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, model_id: int, varargs: dict = None):
+        super().__init__(model_id, varargs)
         if not current_tf_version_is_older_than("2.10.0"):
             raise RuntimeError(
                 "The DeviceAllocatorContextManager is not compatible with tensorflow 2.10.0 "
