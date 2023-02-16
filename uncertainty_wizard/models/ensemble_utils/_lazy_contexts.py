@@ -3,7 +3,9 @@ import errno
 import os
 import pickle
 import time
-from typing import Dict
+import warnings
+from abc import ABC
+from typing import Dict, Optional
 
 import tensorflow as tf
 
@@ -219,23 +221,11 @@ class DynamicGpuGrowthContextManager(EnsembleContextManager):
 global device_id
 
 
-class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
-    """
-    This context manager configures tensorflow such a user-defined amount of processes for every available gpu
-    are started. In addition, running a process on the CPU can be enabled.
+class _DeviceAllocatorContextManagerAbs(EnsembleContextManager, abc.ABC):
+    """Abstract parent class for all managers that allocate processes to specific devices."""
 
-    This is an abstract context manager. To use it, one has to subclass it and override (at least)
-    the abstract methods.
-    """
-
-    def __init__(self):
-        super().__init__()
-        if not current_tf_version_is_older_than("2.10.0"):
-            raise RuntimeError(
-                "The DeviceAllocatorContextManager is not compatible with tensorflow 2.10.0 "
-                "or newer. Please fall back to a single GPU for now (see issue #75),"
-                "or downgrade to tensorflow 2.9.0."
-            )
+    def __init__(self, model_id: int, varargs: dict = None):
+        super().__init__(model_id, varargs)
 
     # docstr-coverage: inherited
     def __enter__(self) -> "DeviceAllocatorContextManager":
@@ -255,7 +245,6 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
     # docstr-coverage: inherited
     def __exit__(self, type, value, traceback) -> None:
         super().__exit__(type, value, traceback)
-
         global number_of_tasks_in_this_process
         global device_id
         if number_of_tasks_in_this_process == self.max_sequential_tasks_per_process():
@@ -331,18 +320,6 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
         *Attention:* This function must be pure: Repeated calls should always return the same value.
 
         :return: A mapping specifying how many processes of this ensemble should run concurrently per gpu.
-        """
-
-    @classmethod
-    @abc.abstractmethod
-    def gpu_memory_limit(cls) -> int:
-        """
-        Override this method to specify the amount of MB which should be used
-        when creating the virtual device on the GPU. Ignored for CPUs.
-
-        *Attention:* This function must be pure: Repeated calls should always return the same value.
-
-        :return: The amount of MB which will be reserved on the selected gpu in the created context.
         """
 
     @classmethod
@@ -433,31 +410,9 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
         print(f"Availabilities: {availablilities}. Picked Device {picked_device}")
         return picked_device
 
-    @classmethod
-    def _use_gpu(cls, index: int):
-        size = cls.gpu_memory_limit()
-        gpus = tf.config.experimental.list_physical_devices("GPU")
-
-        # Check if selected gpu can be found
-        if gpus is None or len(gpus) <= index:
-            raise ValueError(
-                f"Uncertainty Wizards DeviceAllocatorContextManager was configured to use gpu {index} "
-                f"but no no such gpu was found.  "
-            )
-
-        try:
-            tf.config.set_visible_devices([gpus[index]], "GPU")
-            tf.config.experimental.set_virtual_device_configuration(
-                gpus[index],
-                [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=size)],
-            )
-            logical_gpus = tf.config.experimental.list_logical_devices("GPU")
-            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
-        except RuntimeError as e:
-            raise ValueError(
-                f"Uncertainty Wizard was unable to create a virtual device "
-                f"on gpu {index} and memory limit {size}MB"
-            ) from e
+    @abc.abstractmethod
+    def _use_gpu(self, index: int):
+        pass
 
     @classmethod
     def _acquire_lock(cls) -> int:
@@ -501,3 +456,108 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
     def _release_lock(cls, lockfile: int):
         os.close(lockfile)
         os.remove(cls._lock_file_path())
+
+
+class DeviceAllocatorContextManager(_DeviceAllocatorContextManagerAbs, ABC):
+    """DEPRECATED. Please use DeviceAllocatorContextManagerV2 instead.
+
+    This context manager configures tensorflow such a user-defined amount of processes for every available gpu
+    are started. In addition, running a process on the CPU can be enabled.
+
+    This is an abstract context manager. To use it, one has to subclass it and override (at least)
+    the abstract methods.
+    """
+
+    def __init__(self, model_id: int, varargs: dict = None):
+        super().__init__(model_id, varargs)
+        if not current_tf_version_is_older_than("2.10.0"):
+            raise RuntimeError(
+                "The DeviceAllocatorContextManager is not compatible with tensorflow 2.10.0 "
+                "or newer. Please use DeviceAllocatorContextManagerV2 instead."
+            )
+
+        warnings.warn(
+            "DeviceAllocatorContextManager is deprecated. "
+            "Please use DeviceAllocatorContextManagerV2 instead. "
+            "Migration is easy, just extend DeviceAllocatorContextManagerV2 "
+            "instead of DeviceAllocatorContextManager. "
+            "and remove the `gpu_memory_limit` method from your extension. ",
+            DeprecationWarning,
+        )
+
+    def _use_gpu(self, index: int):
+        size = self.gpu_memory_limit()
+        gpus = tf.config.experimental.list_physical_devices("GPU")
+
+        # Check if selected gpu can be found
+        if gpus is None or len(gpus) <= index:
+            raise ValueError(
+                f"Uncertainty Wizards DeviceAllocatorContextManager was configured to use gpu {index} "
+                f"but no no such gpu was found.  "
+            )
+
+        try:
+            tf.config.set_visible_devices([gpus[index]], "GPU")
+            tf.config.experimental.set_virtual_device_configuration(
+                gpus[index],
+                [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=size)],
+            )
+            logical_gpus = tf.config.experimental.list_logical_devices("GPU")
+            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+        except RuntimeError as e:
+            raise ValueError(
+                f"Uncertainty Wizard was unable to create a virtual device "
+                f"on gpu {index} and memory limit {size}MB"
+            ) from e
+
+    @classmethod
+    @abc.abstractmethod
+    def gpu_memory_limit(cls) -> Optional[int]:
+        """
+        Override this method to specify the amount of MB which should be used
+        when creating the virtual device on the GPU. Ignored for CPUs.
+
+        *Attention:* This function must be pure: Repeated calls should always return the same value.
+
+        :return: The amount of MB which will be reserved on the selected gpu in the created context.
+        """
+
+
+class DeviceAllocatorContextManagerV2(_DeviceAllocatorContextManagerAbs, ABC):
+    """Distributes processes over multiple GPUs.
+
+    You can specify how many processes should be started on each GPU.
+    To use this context manager, you have to subclass it and override the abstract methods."""
+
+    def __init__(self, model_id: int, varargs: dict = None):
+        super().__init__(model_id, varargs)
+        self.dynamic_memory_growth_initialized = False
+        self.tf_device = None
+
+        if self.gpu_memory_limit() is not None:
+            warnings.warn(
+                "The DeviceAllocatorContextManagerV2 require or support setting a gpu memory limit. "
+                "Instead, memory is grown dynamically as needed. (but only reduced when the "
+                "process is terminated)."
+                "Your implementation of `gpu_memory_limit` will be ignored.",
+                UserWarning,
+            )
+
+    @classmethod
+    def gpu_memory_limit(cls) -> Optional[int]:
+        """Not needed in DeviceAllocatorContextManagerV2 anymore. Ignored."""
+        return None
+
+    def _use_gpu(self, index: int):
+        if not self.dynamic_memory_growth_initialized:
+            DynamicGpuGrowthContextManager.enable_dynamic_gpu_growth()
+            self.dynamic_memory_growth_initialized = True
+
+        self.tf_device = tf.device(f"gpu:{index}")
+        self.tf_device.__enter__()
+
+    def __exit__(self, type, value, traceback) -> None:
+        super().__exit__(type, value, traceback)
+        if self.tf_device is not None:
+            self.tf_device.__exit__()
+        self.tf_device = None
