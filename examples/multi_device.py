@@ -9,7 +9,7 @@ import tensorflow
 import uncertainty_wizard as uwiz
 
 
-class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManager):
+class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManagerV2):
     @classmethod
     def file_path(cls) -> str:
         return "temp-ensemble.txt"
@@ -27,10 +27,6 @@ class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManager):
         # On gpu 0, two atomic models will be executed at the same time
         # On gpu 1, three atomic models will be executed at the same time
         return {0: 2, 1: 3}
-
-    @classmethod
-    def gpu_memory_limit(cls) -> int:
-        return 1500
 
 
 def train_model(model_id):
