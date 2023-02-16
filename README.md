@@ -33,7 +33,7 @@ Uncertainty wizard is a plugin on top of `tensorflow.keras`,
 * Plain Keras Syntax: Use the layers and APIs you know and love.
 * Conversion from keras: Convert existing keras models into uncertainty aware models.
 * Smart Randomness: Use the same model for point predictions and sampling based inference.
-* Fast ensembles: Train and evaluate deep ensembles lazily loaded and using parallel processing.
+* Fast ensembles: Train and evaluate deep ensembles lazily loaded and using parallel processing - optionally on multiple GPUs.
 * Super easy setup: Pip installable. Only tensorflow as dependency.
 
 #### Installation
@@ -41,10 +41,9 @@ Uncertainty wizard is a plugin on top of `tensorflow.keras`,
 It's as easy as `pip install uncertainty-wizard`
 
 #### Requirements
-`uncertainty-wizard` is tested on python 3.8 and a recent tensorflow versions. Earlier versions (python 3.6+ and tensorflow 2.3+) should mostly work as well, but may require some mild tweaks.
+`uncertainty-wizard` is tested on python 3.8 and recent tensorflow versions. 
+Other versions (python 3.6+ and tensorflow 2.3+) should mostly work as well, but may require some mild tweaks.
 
-Note: There's currently a known issue regarding multi-gpu usage and tensorflow>=2.10. For using Multi-Device GPU config, please
-fall back to `tensorflow==2.9.0` and stay tuned for changes in issue [#75](https://github.com/testingautomated-usi/uncertainty-wizard/issues/75).
 
 #### Documentation
 Our documentation is deployed to
