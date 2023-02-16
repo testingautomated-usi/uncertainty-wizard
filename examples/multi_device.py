@@ -10,7 +10,6 @@ import uncertainty_wizard as uwiz
 
 
 class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManagerV2):
-
     @classmethod
     def file_path(cls) -> str:
         return "temp-ensemble.txt"
@@ -27,39 +26,63 @@ class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManagerV2
         # Here, we configure a setting with two gpus
         # On gpu 0, two atomic models will be executed at the same time
         # On gpu 1, three atomic models will be executed at the same time
-        return {
-            0: 2,
-            1: 3
-        }
+        return {0: 2, 1: 3}
 
 
 def train_model(model_id):
     import tensorflow as tf
 
     model = tf.keras.models.Sequential()
-    model.add(tf.keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same',
-                                     input_shape=(32, 32, 3)))
-    model.add(tf.keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(
+        tf.keras.layers.Conv2D(
+            32,
+            kernel_size=(3, 3),
+            activation="relu",
+            padding="same",
+            input_shape=(32, 32, 3),
+        )
+    )
+    model.add(
+        tf.keras.layers.Conv2D(
+            32, kernel_size=(3, 3), activation="relu", padding="same"
+        )
+    )
     model.add(tf.keras.layers.MaxPooling2D((2, 2)))
     model.add(tf.keras.layers.Dropout(0.2))
-    model.add(tf.keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(tf.keras.layers.Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(
+        tf.keras.layers.Conv2D(
+            64, kernel_size=(3, 3), activation="relu", padding="same"
+        )
+    )
+    model.add(
+        tf.keras.layers.Conv2D(
+            64, kernel_size=(3, 3), activation="relu", padding="same"
+        )
+    )
     model.add(tf.keras.layers.MaxPooling2D((2, 2)))
     model.add(tf.keras.layers.Dropout(0.2))
-    model.add(tf.keras.layers.Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(tf.keras.layers.Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(
+        tf.keras.layers.Conv2D(
+            128, kernel_size=(3, 3), activation="relu", padding="same"
+        )
+    )
+    model.add(
+        tf.keras.layers.Conv2D(
+            128, kernel_size=(3, 3), activation="relu", padding="same"
+        )
+    )
     model.add(tf.keras.layers.MaxPooling2D((2, 2)))
     model.add(tf.keras.layers.Dropout(0.2))
     model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(128, activation='relu'))
+    model.add(tf.keras.layers.Dense(128, activation="relu"))
     model.add(tf.keras.layers.Dropout(0.2))
-    model.add(tf.keras.layers.Dense(10, activation='softmax'))
+    model.add(tf.keras.layers.Dense(10, activation="softmax"))
 
     opt = tf.keras.optimizers.SGD(lr=0.001, momentum=0.9)
-    model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
     (x_train, y_train), (_, _) = tf.keras.datasets.cifar10.load_data()
-    x_train = x_train / 255.
+    x_train = x_train / 255.0
     y_train = tf.keras.utils.to_categorical(y_train, 10)
 
     # For the sake of this example, let's use just one epoch.
@@ -69,7 +92,7 @@ def train_model(model_id):
     return model, "history_not_returned"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Make sure the training data is cached on the fs before the multiprocessing starts
     # Otherwise, all processes will simultaneously attempt to download and cache data,
     # which will fail as they break each others caches
@@ -77,8 +100,12 @@ if __name__ == '__main__':
 
     # set this path to where you want to save the ensemble
     temp_dir = "/tmp/ensemble"
-    ensemble = uwiz.models.LazyEnsemble(num_models=20, model_save_path=temp_dir, delete_existing=True,
-                                        default_num_processes=5)
+    ensemble = uwiz.models.LazyEnsemble(
+        num_models=20,
+        model_save_path=temp_dir,
+        delete_existing=True,
+        default_num_processes=5,
+    )
     ensemble.create(train_model, context=MultiGpuContext)
 
     print("Ensemble was successfully trained")
