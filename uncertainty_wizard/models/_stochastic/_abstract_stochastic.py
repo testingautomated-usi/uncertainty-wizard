@@ -262,6 +262,7 @@ class Stochastic(_UwizModel):
         steps=None,
         as_confidence: Union[None, bool] = None,
         broadcaster: Broadcaster = None,
+        return_alias_dict: bool = False,
     ):
         """
         Calculates predictions and uncertainties (or confidences) according to the passed quantifer(s).
@@ -277,7 +278,10 @@ class Stochastic(_UwizModel):
         :param as_confidence: If true, uncertainties are multiplied by (-1),
         if false, confidences are multiplied by (-1). Default: No transformations.
         :param broadcaster: Sampling Related Dependencies. If None, the DefaultBroadcaster will be used.
-        :return: A tuple (predictions, uncertainties_or_confidences) if a single quantifier was
+        :param return_alias_dict: If true, the result is returned as a dictionary with the quantifier aliases as keys.
+        :return: If `return_alias_dict=True`, a dict with all quantifier aliases as keys
+            and (predictions, uncertainties_or_confidences) as values.
+        Otherwise (default), a tuple (predictions, uncertainties_or_confidences) if a single quantifier was
         passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
         """
         all_q, pp_q, sample_q, return_single_tuple = self._quantifiers_as_list(
@@ -313,17 +317,18 @@ class Stochastic(_UwizModel):
             )
 
         results = self._run_quantifiers(
-            as_confidence, point_prediction_scores, all_q, stochastic_scores
+            as_confidence, point_prediction_scores, all_q, stochastic_scores,
+            as_dict=return_alias_dict
         )
-        if return_single_tuple:
+        if return_single_tuple and not return_alias_dict:
             return results[0]
         return results
 
     @staticmethod
     def _run_quantifiers(
-        as_confidence, point_prediction_scores, quantifiers, stochastic_scores
+        as_confidence, point_prediction_scores, quantifiers, stochastic_scores, as_dict=False
     ):
-        results = []
+        results = dict() if as_dict else []
         for q in quantifiers:
             if q.takes_samples():
                 assert stochastic_scores is not None, (
@@ -341,7 +346,11 @@ class Stochastic(_UwizModel):
             superv_scores = q.cast_conf_or_unc(
                 as_confidence=as_confidence, superv_scores=superv_scores
             )
-            results.append((predictions, superv_scores))
+            if as_dict:
+                for alias in q.aliases():
+                    results[alias] = (predictions, superv_scores)
+            else:
+                results.append((predictions, superv_scores))
         return results
 
     @staticmethod

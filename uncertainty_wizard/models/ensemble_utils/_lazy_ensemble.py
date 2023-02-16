@@ -27,10 +27,10 @@ T = TypeVar("T")
 
 
 def _model_creation_and_saving_process(
-    model_id: int,
-    save_config: SaveConfig,
-    inner_func: Callable[[int], Tuple[tf.keras.Model, T]],
-    context: Callable[[int, dict], EnsembleContextManager],
+        model_id: int,
+        save_config: SaveConfig,
+        inner_func: Callable[[int], Tuple[tf.keras.Model, T]],
+        context: Callable[[int, dict], EnsembleContextManager],
 ):
     # No varargs yet. This is a placeholder for future version extensions
     varargs = dict()
@@ -42,10 +42,10 @@ def _model_creation_and_saving_process(
 
 
 def _model_updating_process(
-    model_id: int,
-    save_config: SaveConfig,
-    inner_func: Callable[[int, tf.keras.Model], Tuple[tf.keras.Model, Any]],
-    context: Callable[[int, dict], EnsembleContextManager],
+        model_id: int,
+        save_config: SaveConfig,
+        inner_func: Callable[[int, tf.keras.Model], Tuple[tf.keras.Model, Any]],
+        context: Callable[[int, dict], EnsembleContextManager],
 ):
     # No varargs yet. This is a placeholder for future version extensions
     varargs = dict()
@@ -58,10 +58,10 @@ def _model_updating_process(
 
 
 def _model_consuming_process(
-    model_id: int,
-    save_config: SaveConfig,
-    inner_func: Callable[[int, tf.keras.Model], Any],
-    context: Callable[[int, dict], EnsembleContextManager],
+        model_id: int,
+        save_config: SaveConfig,
+        inner_func: Callable[[int, tf.keras.Model], Any],
+        context: Callable[[int, dict], EnsembleContextManager],
 ):
     # No varargs yet. This is a placeholder for future version extensions
     varargs = dict()
@@ -75,10 +75,10 @@ def _model_consuming_process(
 # the save_config is not used, but a parameter for consistency with other process functions
 # noinspection PyUnusedLocal
 def _model_independent_process(
-    model_id: int,
-    save_config: SaveConfig,
-    inner_func: Callable[[int], Any],
-    context: Callable[[int, dict], EnsembleContextManager],
+        model_id: int,
+        save_config: SaveConfig,
+        inner_func: Callable[[int], Any],
+        context: Callable[[int, dict], EnsembleContextManager],
 ):
     # No varargs yet. This is a placeholder for future version extensions
     varargs = dict()
@@ -158,12 +158,12 @@ class LazyEnsemble(_UwizModel):
     """
 
     def __init__(
-        self,
-        num_models: int,
-        model_save_path: str,
-        delete_existing: bool = True,
-        expect_model: bool = False,
-        default_num_processes: int = 1,
+            self,
+            num_models: int,
+            model_save_path: str,
+            delete_existing: bool = True,
+            expect_model: bool = False,
+            default_num_processes: int = 1,
     ):
         """
         Creates a new lazy model.
@@ -190,11 +190,11 @@ class LazyEnsemble(_UwizModel):
         return self.default_num_processes if num_processes is None else num_processes
 
     def create(
-        self,
-        create_function: Callable[[int], Tuple[tf.keras.Model, T]],
-        num_processes: int = None,
-        context: Callable[[int, dict], EnsembleContextManager] = None,
-        models: Optional[Iterable[int]] = None,
+            self,
+            create_function: Callable[[int], Tuple[tf.keras.Model, T]],
+            num_processes: int = None,
+            context: Callable[[int, dict], EnsembleContextManager] = None,
+            models: Optional[Iterable[int]] = None,
     ) -> List[T]:
         """
         This function takes care of the creation of new atomic models for this ensemble instance.
@@ -225,11 +225,11 @@ class LazyEnsemble(_UwizModel):
         )
 
     def modify(
-        self,
-        map_function: Callable[[int, tf.keras.Model], Tuple[tf.keras.Model, T]],
-        num_processes: int = None,
-        context: Callable[[int], EnsembleContextManager] = None,
-        models: Iterable[int] = None,
+            self,
+            map_function: Callable[[int, tf.keras.Model], Tuple[tf.keras.Model, T]],
+            num_processes: int = None,
+            context: Callable[[int], EnsembleContextManager] = None,
+            models: Iterable[int] = None,
     ) -> List[T]:
         """
         This function takes care of modifications of previously generated atomic models for this ensemble instance.
@@ -265,11 +265,11 @@ class LazyEnsemble(_UwizModel):
         )
 
     def consume(
-        self,
-        consume_function: Callable[[int, tf.keras.Model], T],
-        num_processes: int = None,
-        context: Callable[[int], EnsembleContextManager] = None,
-        models: Iterable[int] = None,
+            self,
+            consume_function: Callable[[int, tf.keras.Model], T],
+            num_processes: int = None,
+            context: Callable[[int], EnsembleContextManager] = None,
+            models: Iterable[int] = None,
     ) -> List[T]:
         """
         This function uses the atomic models in the ensemble without changing them.
@@ -304,11 +304,11 @@ class LazyEnsemble(_UwizModel):
         )
 
     def run_model_free(
-        self,
-        task: Callable[[int], T],
-        num_processes: int = None,
-        context: Callable[[int], EnsembleContextManager] = None,
-        num_times: Optional[int] = None,
+            self,
+            task: Callable[[int], T],
+            num_processes: int = None,
+            context: Callable[[int], EnsembleContextManager] = None,
+            num_times: Optional[int] = None,
     ) -> List[T]:
         """
         Runs a task for every model, but without actually loading or persisting any model
@@ -333,26 +333,26 @@ class LazyEnsemble(_UwizModel):
         )
 
     def fit(
-        self,
-        x: np.ndarray = None,
-        y: np.ndarray = None,
-        batch_size: int = None,
-        epochs: int = 1,
-        verbose: int = 1,
-        callbacks=None,
-        validation_split: float = 0.0,
-        validation_data: Optional[Tuple[np.ndarray, np.ndarray]] = None,
-        shuffle: bool = True,
-        class_weight: Dict[int, float] = None,
-        sample_weight: np.ndarray = None,
-        initial_epoch: int = 0,
-        steps_per_epoch: int = None,
-        validation_steps: int = None,
-        validation_freq: int = 1,
-        # Note: Max_queue_size, workers and use_multiprocessing not supported as we force input to be numpy array
-        pickle_arrays=True,
-        num_processes=None,
-        context: Callable[[int], EnsembleContextManager] = None,
+            self,
+            x: np.ndarray = None,
+            y: np.ndarray = None,
+            batch_size: int = None,
+            epochs: int = 1,
+            verbose: int = 1,
+            callbacks=None,
+            validation_split: float = 0.0,
+            validation_data: Optional[Tuple[np.ndarray, np.ndarray]] = None,
+            shuffle: bool = True,
+            class_weight: Dict[int, float] = None,
+            sample_weight: np.ndarray = None,
+            initial_epoch: int = 0,
+            steps_per_epoch: int = None,
+            validation_steps: int = None,
+            validation_freq: int = 1,
+            # Note: Max_queue_size, workers and use_multiprocessing not supported as we force input to be numpy array
+            pickle_arrays=True,
+            num_processes=None,
+            context: Callable[[int], EnsembleContextManager] = None,
     ):
         """
         An easy access to keras fit function.
@@ -396,11 +396,11 @@ class LazyEnsemble(_UwizModel):
         elif not isinstance(y, np.ndarray):
             invalid_input = "y_train"
         elif validation_data is not None and (
-            validation_data[0] is None or not isinstance(validation_data[0], np.ndarray)
+                validation_data[0] is None or not isinstance(validation_data[0], np.ndarray)
         ):
             invalid_input = "validation_data[0]"
         elif validation_data is not None and (
-            validation_data[1] is None or not isinstance(validation_data[1], np.ndarray)
+                validation_data[1] is None or not isinstance(validation_data[1], np.ndarray)
         ):
             invalid_input = "validation_data[1]"
         if invalid_input is not None:
@@ -458,17 +458,18 @@ class LazyEnsemble(_UwizModel):
         return res
 
     def predict_quantified(
-        self,
-        x: np.ndarray,
-        quantifier: Union[Quantifier, Iterable[Union[str, Quantifier]]],
-        # Other Sequential.predict params (e.g. Callbacks) are not yet supported
-        batch_size: int = 32,
-        verbose: int = 0,
-        steps=None,
-        as_confidence: Union[None, bool] = None,
-        num_processes=None,
-        context=None,
-        models: Optional[Iterable[int]] = None,
+            self,
+            x: np.ndarray,
+            quantifier: Union[Quantifier, Iterable[Union[str, Quantifier]]],
+            # Other Sequential.predict params (e.g. Callbacks) are not yet supported
+            batch_size: int = 32,
+            verbose: int = 0,
+            steps=None,
+            as_confidence: Union[None, bool] = None,
+            num_processes=None,
+            context=None,
+            models: Optional[Iterable[int]] = None,
+            return_alias_dict: bool = False,
     ):
         """
         Utility function to make quantified predictions on numpy arrays.
@@ -486,8 +487,11 @@ class LazyEnsemble(_UwizModel):
         :param context: A contextmanager which prepares a newly crated process for execution
             (e.g. by configuring the gpus). See class docstring for explanation of default values.
         :param models: A list of model indices to use for prediction. Default: `None`(All models).
-        :return: A tuple (predictions, uncertainties_or_confidences) if a single quantifier was passed as string
-            or instance, or a collection of such tuples if the passed quantifiers was an iterable.
+        :param return_alias_dict: If true, the result is returned as a dictionary with the quantifier aliases as keys.
+        :return: If `return_alias_dict=True`, a dict with all quantifier aliases as keys
+            and (predictions, uncertainties_or_confidences) as values.
+            Otherwise (default), a tuple (predictions, uncertainties_or_confidences) if a single quantifier was
+            passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
         """
         if verbose > 0:
             warnings.warn("Verbosity not yet supported in lazy ensemble models.")
@@ -501,16 +505,18 @@ class LazyEnsemble(_UwizModel):
             num_processes=num_processes,
             context=context,
             models=models,
+            return_alias_dict=return_alias_dict,
         )
 
     def quantify_predictions(
-        self,
-        quantifier: Union[Quantifier, Iterable[Quantifier]],
-        consume_function: Callable[[int, tf.keras.Model], Any],
-        as_confidence: bool = None,
-        num_processes: int = None,
-        context: Callable[[int], EnsembleContextManager] = None,
-        models: Optional[Iterable[int]] = None,
+            self,
+            quantifier: Union[Quantifier, Iterable[Quantifier]],
+            consume_function: Callable[[int, tf.keras.Model], Any],
+            as_confidence: bool = None,
+            num_processes: int = None,
+            context: Callable[[int], EnsembleContextManager] = None,
+            models: Optional[Iterable[int]] = None,
+            return_alias_dict: bool = False,
     ):
         """
         A utility function to make predictions on all atomic models and then infer overall predictions and uncertainty
@@ -525,7 +531,11 @@ class LazyEnsemble(_UwizModel):
         :param num_processes: The number of processes to use. Default: The default or value specified when creating the lazy ensemble.
         :param context: A contextmanager which prepares a newly crated process for execution (e.g. by configuring the gpus). See class docstring for explanation of default values.
         :param models: A list of model indices to use for prediction. Default: `None`(All models).
-        :return: A tuple (predictions, uncertainties_or_confidences) if a single quantifier was passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
+        :param return_alias_dict: If true, the result is returned as a dictionary with the quantifier aliases as keys.
+        :return: If `return_alias_dict=True`, a dict with all quantifier aliases as keys
+            and (predictions, uncertainties_or_confidences) as values.
+            Otherwise (default), a tuple (predictions, uncertainties_or_confidences) if a single quantifier was
+            passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
         """
         all_q, pp_q, sample_q, return_single_tuple = self._quantifiers_as_list(
             quantifier
@@ -549,24 +559,29 @@ class LazyEnsemble(_UwizModel):
                 scores = np.empty(scores_shape)
             scores[:, i] = predictions
 
-        results = []
+        results = dict() if return_alias_dict else list()
         for q in all_q:
             predictions, superv_scores = q.calculate(scores)
             superv_scores = q.cast_conf_or_unc(
                 as_confidence=as_confidence, superv_scores=superv_scores
             )
-            results.append((predictions, superv_scores))
-        if return_single_tuple:
+            # Add the predictions and superv_scores to the results
+            if return_alias_dict:
+                for alias in q.aliases():
+                    results[alias] = (predictions, superv_scores)
+            else:
+                results.append((predictions, superv_scores))
+        if return_single_tuple and not return_alias_dict:
             return results[0]
         return results
 
     def _run_in_processes(
-        self,
-        process_creator,
-        inner_function: Callable[[int, tf.keras.Model], Any],
-        num_processes: Optional[int],
-        context: Optional[Callable[[int], EnsembleContextManager]],
-        models: Optional[Iterable[int]] = None,
+            self,
+            process_creator,
+            inner_function: Callable[[int, tf.keras.Model], Any],
+            num_processes: Optional[int],
+            context: Optional[Callable[[int], EnsembleContextManager]],
+            models: Optional[Iterable[int]] = None,
     ):
         models = range(self.num_models) if models is None else models
         num_processes = self._num_processes_or_default(num_processes=num_processes)

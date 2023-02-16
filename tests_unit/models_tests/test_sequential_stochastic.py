@@ -6,7 +6,7 @@ import tensorflow as tf
 import uncertainty_wizard as uwiz
 from uncertainty_wizard.internal_utils import UncertaintyWizardWarning
 from uncertainty_wizard.models import StochasticSequential
-from uncertainty_wizard.quantifiers import StandardDeviation
+from uncertainty_wizard.quantifiers import StandardDeviation, VariationRatio, MaxSoftmax
 
 
 class SequentialStochasticTest(TestCase):
@@ -16,6 +16,55 @@ class SequentialStochasticTest(TestCase):
         model.add(tf.keras.layers.Input(shape=1000))
         model.add(tf.keras.layers.Dropout(rate=0.5))
         return model
+
+    @staticmethod
+    def _dummy_classifier():
+        model = StochasticSequential()
+        model.add(tf.keras.layers.Input(shape=1000))
+        model.add(tf.keras.layers.Dropout(rate=0.5))
+        model.add(tf.keras.layers.Dense(10, activation="softmax"))
+        # compile the model
+        model.compile(
+            optimizer=tf.keras.optimizers.Adam(),
+            loss=tf.keras.losses.CategoricalCrossentropy(),
+            metrics=[tf.keras.metrics.CategoricalAccuracy()],
+        )
+        return model
+
+    def test_result_as_dict(self):
+        model = self._dummy_classifier()
+        x = np.ones((10, 1000))
+        res = model.predict_quantified(x=x,
+                                       quantifier=[
+                                           "MaxSoftmax", VariationRatio(),
+                                       ],
+                                       return_alias_dict=True)
+
+        self.assertTrue(isinstance(res, dict))
+        for key, values in res.items():
+            self.assertTrue(isinstance(key, str))
+            self.assertTrue(isinstance(values, tuple))
+            self.assertEqual(len(values), 2)
+            self.assertEqual(values[0].shape, (10,))
+            self.assertEqual(values[1].shape, (10,))
+
+        for q in [MaxSoftmax(), VariationRatio()]:
+            for a in q.aliases():
+                self.assertTrue(a in res.keys())
+
+    def test_return_type_default_multi_quant(self):
+        model = self._dummy_classifier()
+        x = np.ones((10, 1000))
+        res = model.predict_quantified(x=x, quantifier=["MaxSoftmax", VariationRatio()])
+        self.assertTrue(isinstance(res, list))
+        self.assertTrue(len(res), 2)
+
+    def test_return_type_default_single_quant(self):
+        model = self._dummy_classifier()
+        x = np.ones((10, 1000))
+        res = model.predict_quantified(x=x, quantifier="MaxSoftmax")
+        self.assertTrue(isinstance(res, tuple))
+        self.assertTrue(len(res), 2)
 
     def test_predict_is_deterministic(self):
         model = self._dummy_model()
