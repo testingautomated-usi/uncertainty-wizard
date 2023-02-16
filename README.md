@@ -17,6 +17,7 @@
     <a href="https://pypi.org/project/uncertainty-wizard/">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/uncertainty-wizard">
     </a>
+    <a href="https://doi.org/10.5281/zenodo.7646373"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7646373.svg" alt="DOI"></a>
 </p>
 
 <p align="center" style="  height: 40px;  line-height: 40px">
