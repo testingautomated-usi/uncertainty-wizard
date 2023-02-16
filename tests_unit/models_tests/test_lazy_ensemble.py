@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 
 import uncertainty_wizard as uwiz
+from uncertainty_wizard.quantifiers import StandardDeviation
 
 DUMMY_MODEL_PATH = "tmp/dummy_lazy_ensemble"
 
@@ -55,6 +56,25 @@ class LazyEnsembleTest(TestCase):
         )
         self.assertEqual(pred.shape, (10, 1))
         self.assertEqual(std.shape, (10, 1))
+
+    def test_result_as_dict(self):
+        ensemble = uwiz.models.LazyEnsemble(
+            num_models=2, model_save_path=DUMMY_MODEL_PATH, default_num_processes=0
+        )
+        ensemble.create(create_function=create_dummy_atomic_model)
+        res = ensemble.predict_quantified(
+            x=np.ones((10, 1000)),
+            quantifier="std",
+            num_processes=0,
+            return_alias_dict=True,
+        )
+        assert isinstance(res, dict)
+        for alias in StandardDeviation().aliases():
+            assert alias in res
+            assert type(res[alias]) == tuple
+            assert len(res[alias]) == 2
+            assert res[alias][0].shape == (10, 1)
+            assert res[alias][1].shape == (10, 1)
 
     def test_dummy_main_and_one_distinct_process_are_equivalent(self):
         ensemble = uwiz.models.LazyEnsemble(

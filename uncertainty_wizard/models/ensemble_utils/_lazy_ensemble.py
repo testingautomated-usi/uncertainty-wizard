@@ -469,6 +469,7 @@ class LazyEnsemble(_UwizModel):
         num_processes=None,
         context=None,
         models: Optional[Iterable[int]] = None,
+        return_alias_dict: bool = False,
     ):
         """
         Utility function to make quantified predictions on numpy arrays.
@@ -486,8 +487,11 @@ class LazyEnsemble(_UwizModel):
         :param context: A contextmanager which prepares a newly crated process for execution
             (e.g. by configuring the gpus). See class docstring for explanation of default values.
         :param models: A list of model indices to use for prediction. Default: `None`(All models).
-        :return: A tuple (predictions, uncertainties_or_confidences) if a single quantifier was passed as string
-            or instance, or a collection of such tuples if the passed quantifiers was an iterable.
+        :param return_alias_dict: If true, the result is returned as a dictionary with the quantifier aliases as keys.
+        :return: If `return_alias_dict=True`, a dict with all quantifier aliases as keys
+            and (predictions, uncertainties_or_confidences) as values.
+            Otherwise (default), a tuple (predictions, uncertainties_or_confidences) if a single quantifier was
+            passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
         """
         if verbose > 0:
             warnings.warn("Verbosity not yet supported in lazy ensemble models.")
@@ -501,6 +505,7 @@ class LazyEnsemble(_UwizModel):
             num_processes=num_processes,
             context=context,
             models=models,
+            return_alias_dict=return_alias_dict,
         )
 
     def quantify_predictions(
@@ -511,6 +516,7 @@ class LazyEnsemble(_UwizModel):
         num_processes: int = None,
         context: Callable[[int], EnsembleContextManager] = None,
         models: Optional[Iterable[int]] = None,
+        return_alias_dict: bool = False,
     ):
         """
         A utility function to make predictions on all atomic models and then infer overall predictions and uncertainty
@@ -525,7 +531,11 @@ class LazyEnsemble(_UwizModel):
         :param num_processes: The number of processes to use. Default: The default or value specified when creating the lazy ensemble.
         :param context: A contextmanager which prepares a newly crated process for execution (e.g. by configuring the gpus). See class docstring for explanation of default values.
         :param models: A list of model indices to use for prediction. Default: `None`(All models).
-        :return: A tuple (predictions, uncertainties_or_confidences) if a single quantifier was passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
+        :param return_alias_dict: If true, the result is returned as a dictionary with the quantifier aliases as keys.
+        :return: If `return_alias_dict=True`, a dict with all quantifier aliases as keys
+            and (predictions, uncertainties_or_confidences) as values.
+            Otherwise (default), a tuple (predictions, uncertainties_or_confidences) if a single quantifier was
+            passed as string or instance, or a collection of such tuples if the passed quantifiers was an iterable.
         """
         all_q, pp_q, sample_q, return_single_tuple = self._quantifiers_as_list(
             quantifier
@@ -549,14 +559,19 @@ class LazyEnsemble(_UwizModel):
                 scores = np.empty(scores_shape)
             scores[:, i] = predictions
 
-        results = []
+        results = dict() if return_alias_dict else list()
         for q in all_q:
             predictions, superv_scores = q.calculate(scores)
             superv_scores = q.cast_conf_or_unc(
                 as_confidence=as_confidence, superv_scores=superv_scores
             )
-            results.append((predictions, superv_scores))
-        if return_single_tuple:
+            # Add the predictions and superv_scores to the results
+            if return_alias_dict:
+                for alias in q.aliases():
+                    results[alias] = (predictions, superv_scores)
+            else:
+                results.append((predictions, superv_scores))
+        if return_single_tuple and not return_alias_dict:
             return results[0]
         return results
 
