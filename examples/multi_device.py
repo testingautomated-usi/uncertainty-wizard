@@ -9,8 +9,7 @@ import tensorflow
 import uncertainty_wizard as uwiz
 
 
-class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManager):
-
+class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManagerV2):
 
     @classmethod
     def file_path(cls) -> str:
@@ -32,10 +31,6 @@ class MultiGpuContext(uwiz.models.ensemble_utils.DeviceAllocatorContextManager):
             0: 2,
             1: 3
         }
-
-    @classmethod
-    def gpu_memory_limit(cls) -> int:
-        return 1500
 
 
 def train_model(model_id):

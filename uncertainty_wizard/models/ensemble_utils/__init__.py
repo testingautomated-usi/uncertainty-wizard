@@ -3,6 +3,7 @@ __all__ = [
     "DynamicGpuGrowthContextManager",
     "NoneContextManager",
     "DeviceAllocatorContextManager",
+    "DeviceAllocatorContextManagerV2",
     "CpuOnlyContextManager",
     "SaveConfig",
 ]
@@ -10,6 +11,7 @@ __all__ = [
 from ._lazy_contexts import (
     CpuOnlyContextManager,
     DeviceAllocatorContextManager,
+    DeviceAllocatorContextManagerV2,
     DynamicGpuGrowthContextManager,
     EnsembleContextManager,
     NoneContextManager,

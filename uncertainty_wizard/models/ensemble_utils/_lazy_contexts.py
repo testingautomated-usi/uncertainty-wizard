@@ -3,12 +3,14 @@ import errno
 import os
 import pickle
 import time
-from typing import Dict
+import warnings
+from abc import ABC
+from typing import Dict, Optional
 
 import tensorflow as tf
 
 from uncertainty_wizard.internal_utils.tf_version_resolver import (
-    current_tf_version_is_older_than,
+    current_tf_version_is_older_than, current_tf_version_is_newer_than,
 )
 from uncertainty_wizard.models.ensemble_utils._save_config import SaveConfig
 
@@ -108,7 +110,7 @@ class EnsembleContextManager(abc.ABC):
     # Inspection disabled as overriding child classes may want to use 'self'
     # noinspection PyMethodMayBeStatic
     def save_single_model(
-        self, model_id: int, model: tf.keras.Model, save_config: SaveConfig
+            self, model_id: int, model: tf.keras.Model, save_config: SaveConfig
     ) -> None:
         """
         This method will be called to store a single atomic model in the ensemble.
@@ -124,7 +126,7 @@ class EnsembleContextManager(abc.ABC):
     # Inspection disabled as overriding child classes may want to use 'self'
     # noinspection PyMethodMayBeStatic
     def load_single_model(
-        self, model_id: int, save_config: SaveConfig
+            self, model_id: int, save_config: SaveConfig
     ) -> tf.keras.Model:
         """
         This method will be called to load a single atomic model in the ensemble.
@@ -219,7 +221,7 @@ class DynamicGpuGrowthContextManager(EnsembleContextManager):
 global device_id
 
 
-class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
+class DeviceAllocatorContextManagerAbs(EnsembleContextManager, abc.ABC):
     """
     This context manager configures tensorflow such a user-defined amount of processes for every available gpu
     are started. In addition, running a process on the CPU can be enabled.
@@ -230,12 +232,6 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
 
     def __init__(self, model_id: int, varargs: dict = None):
         super().__init__(model_id, varargs)
-        if not current_tf_version_is_older_than("2.10.0"):
-            raise RuntimeError(
-                "The DeviceAllocatorContextManager is not compatible with tensorflow 2.10.0 "
-                "or newer. Please fall back to a single GPU for now (see issue #75),"
-                "or downgrade to tensorflow 2.9.0."
-            )
 
     # docstr-coverage: inherited
     def __enter__(self) -> "DeviceAllocatorContextManager":
@@ -255,7 +251,6 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
     # docstr-coverage: inherited
     def __exit__(self, type, value, traceback) -> None:
         super().__exit__(type, value, traceback)
-
         global number_of_tasks_in_this_process
         global device_id
         if number_of_tasks_in_this_process == self.max_sequential_tasks_per_process():
@@ -331,18 +326,6 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
         *Attention:* This function must be pure: Repeated calls should always return the same value.
 
         :return: A mapping specifying how many processes of this ensemble should run concurrently per gpu.
-        """
-
-    @classmethod
-    @abc.abstractmethod
-    def gpu_memory_limit(cls) -> int:
-        """
-        Override this method to specify the amount of MB which should be used
-        when creating the virtual device on the GPU. Ignored for CPUs.
-
-        *Attention:* This function must be pure: Repeated calls should always return the same value.
-
-        :return: The amount of MB which will be reserved on the selected gpu in the created context.
         """
 
     @classmethod
@@ -433,9 +416,66 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
         print(f"Availabilities: {availablilities}. Picked Device {picked_device}")
         return picked_device
 
+    @abc.abstractmethod
+    def _use_gpu(self, index: int):
+        pass
+
     @classmethod
-    def _use_gpu(cls, index: int):
-        size = cls.gpu_memory_limit()
+    def _acquire_lock(cls) -> int:
+        """
+        Waits until no lockfile is present and, once possible, creates a lockfile.
+        Code inspired by https://github.com/dmfrey/FileLock/blob/master/filelock/filelock.py
+
+        :returns the file descriptor (int) of the acquired lockfile
+        :raise RuntimeError if the lock acquiring times out or if an IO error prevents lock acquiring.
+        """
+        timeout = cls.acquire_lock_timeout()
+        start_time = time.time()
+        while True:
+            try:
+                return os.open(
+                    cls._lock_file_path(),
+                    (
+                            os.O_CREAT  # create file if it does not exist
+                            | os.O_EXCL  # error if create and file exists
+                            | os.O_RDWR
+                    ),  # open for reading and writing
+                )
+            except OSError as e:
+                if e.errno != errno.EEXIST and not isinstance(e, FileNotFoundError):
+                    # Some other error than 'file exists' occurred
+                    raise RuntimeError(
+                        "An error occurred when trying to acquire lock for device allocation "
+                    ) from e
+                if (time.time() - start_time) >= timeout:
+                    raise RuntimeError(
+                        (
+                            f"Ensemble process was not capable of acquiring lock in {timeout} seconds."
+                            f"Make sure that no file `{cls._lock_file_path()}` exists (delete it if it does)."
+                            f"If this does not help, consider increasing the timeout by overriding `acquire_lock_timeout`"
+                            f"in your DeviceAllocatorContextManager extension"
+                        )
+                    )
+                time.sleep(cls.delay())
+
+    @classmethod
+    def _release_lock(cls, lockfile: int):
+        os.close(lockfile)
+        os.remove(cls._lock_file_path())
+
+
+class DeviceAllocatorContextManager(DeviceAllocatorContextManagerAbs, ABC):
+
+    def __init__(self, model_id: int, varargs: dict = None):
+        super().__init__(model_id, varargs)
+        if not current_tf_version_is_older_than("2.10.0"):
+            raise RuntimeError(
+                "The DeviceAllocatorContextManager is not compatible with tensorflow 2.10.0 "
+                "or newer. Please use DeviceAllocatorContextManagerV2 instead."
+            )
+
+    def _use_gpu(self, index: int):
+        size = self.gpu_memory_limit()
         gpus = tf.config.experimental.list_physical_devices("GPU")
 
         # Check if selected gpu can be found
@@ -460,44 +500,49 @@ class DeviceAllocatorContextManager(EnsembleContextManager, abc.ABC):
             ) from e
 
     @classmethod
-    def _acquire_lock(cls) -> int:
+    @abc.abstractmethod
+    def gpu_memory_limit(cls) -> Optional[int]:
         """
-        Waits until no lockfile is present and, once possible, creates a lockfile.
-        Code inspired by https://github.com/dmfrey/FileLock/blob/master/filelock/filelock.py
+        Override this method to specify the amount of MB which should be used
+        when creating the virtual device on the GPU. Ignored for CPUs.
 
-        :returns the file descriptor (int) of the acquired lockfile
-        :raise RuntimeError if the lock acquiring times out or if an IO error prevents lock acquiring.
+        *Attention:* This function must be pure: Repeated calls should always return the same value.
+
+        :return: The amount of MB which will be reserved on the selected gpu in the created context.
         """
-        timeout = cls.acquire_lock_timeout()
-        start_time = time.time()
-        while True:
-            try:
-                return os.open(
-                    cls._lock_file_path(),
-                    (
-                        os.O_CREAT  # create file if it does not exist
-                        | os.O_EXCL  # error if create and file exists
-                        | os.O_RDWR
-                    ),  # open for reading and writing
-                )
-            except OSError as e:
-                if e.errno != errno.EEXIST and not isinstance(e, FileNotFoundError):
-                    # Some other error than 'file exists' occurred
-                    raise RuntimeError(
-                        "An error occurred when trying to acquire lock for device allocation "
-                    ) from e
-                if (time.time() - start_time) >= timeout:
-                    raise RuntimeError(
-                        (
-                            f"Ensemble process was not capable of acquiring lock in {timeout} seconds."
-                            f"Make sure that no file `{cls._lock_file_path()}` exists (delete it if it does)."
-                            f"If this does not help, consider increasing the timeout by overriding `acquire_lock_timeout`"
-                            f"in your DeviceAllocatorContextManager extension"
-                        )
-                    )
-                time.sleep(cls.delay())
+
+
+class DeviceAllocatorContextManagerV2(DeviceAllocatorContextManagerAbs, ABC):
+
+    def __init__(self, model_id: int, varargs: dict = None):
+        super().__init__(model_id, varargs)
+        self.dynamic_memory_growth_initialized = False
+        self.tf_device = None
+
+        if self.gpu_memory_limit() is not None:
+            warnings.warn("The DeviceAllocatorContextManagerV2 require or support setting a gpu memory limit. "
+                          "Instead, memory is grown dynamically as needed. (but only reduced when the "
+                          "process is terminated)."
+                          "Your implementation of `gpu_memory_limit` will be ignored.", UserWarning)
 
     @classmethod
-    def _release_lock(cls, lockfile: int):
-        os.close(lockfile)
-        os.remove(cls._lock_file_path())
+    def gpu_memory_limit(cls) -> Optional[int]:
+        """Not needed in DeviceAllocatorContextManagerV2 anymore. Ignored."""
+        return None
+
+    def _use_gpu(self, index: int):
+        if not self.dynamic_memory_growth_initialized:
+            DynamicGpuGrowthContextManager.enable_dynamic_gpu_growth()
+            self.dynamic_memory_growth_initialized = True
+
+        self.tf_device = tf.device(f"gpu:{index}")
+        self.tf_device.__enter__()
+
+    def __exit__(self, type, value, traceback) -> None:
+        super().__exit__(type, value, traceback)
+        if self.tf_device is not None:
+            self.tf_device.__exit__()
+        self.tf_device = None
+
+
+
