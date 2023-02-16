@@ -6,7 +6,7 @@ import tensorflow as tf
 import uncertainty_wizard as uwiz
 from uncertainty_wizard.internal_utils import UncertaintyWizardWarning
 from uncertainty_wizard.models import StochasticSequential
-from uncertainty_wizard.quantifiers import StandardDeviation, VariationRatio, MaxSoftmax
+from uncertainty_wizard.quantifiers import MaxSoftmax, StandardDeviation, VariationRatio
 
 
 class SequentialStochasticTest(TestCase):
@@ -34,11 +34,14 @@ class SequentialStochasticTest(TestCase):
     def test_result_as_dict(self):
         model = self._dummy_classifier()
         x = np.ones((10, 1000))
-        res = model.predict_quantified(x=x,
-                                       quantifier=[
-                                           "MaxSoftmax", VariationRatio(),
-                                       ],
-                                       return_alias_dict=True)
+        res = model.predict_quantified(
+            x=x,
+            quantifier=[
+                "MaxSoftmax",
+                VariationRatio(),
+            ],
+            return_alias_dict=True,
+        )
 
         self.assertTrue(isinstance(res, dict))
         for key, values in res.items():

@@ -317,8 +317,11 @@ class Stochastic(_UwizModel):
             )
 
         results = self._run_quantifiers(
-            as_confidence, point_prediction_scores, all_q, stochastic_scores,
-            as_dict=return_alias_dict
+            as_confidence,
+            point_prediction_scores,
+            all_q,
+            stochastic_scores,
+            as_dict=return_alias_dict,
         )
         if return_single_tuple and not return_alias_dict:
             return results[0]
@@ -326,7 +329,11 @@ class Stochastic(_UwizModel):
 
     @staticmethod
     def _run_quantifiers(
-        as_confidence, point_prediction_scores, quantifiers, stochastic_scores, as_dict=False
+        as_confidence,
+        point_prediction_scores,
+        quantifiers,
+        stochastic_scores,
+        as_dict=False,
     ):
         results = dict() if as_dict else []
         for q in quantifiers:
